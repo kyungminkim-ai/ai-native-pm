@@ -836,6 +836,47 @@
   .status-dot.yellow { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
   .status-dot.red { background: var(--red); box-shadow: 0 0 8px var(--red); }
 
+  /* SESSION LOG */
+  .log-schema {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.8;
+    overflow-x: auto;
+    margin: 20px 0;
+  }
+  .log-schema .key { color: #79b8ff; }
+  .log-schema .val { color: #f8c555; }
+  .log-schema .comment { color: var(--text3); }
+  .log-schema .highlight { color: var(--green); font-weight: 600; }
+
+  .output-types-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .output-type-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .output-type-key {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px;
+    color: var(--green);
+    margin-bottom: 4px;
+  }
+  .output-type-desc {
+    font-size: 12px;
+    color: var(--text3);
+  }
+
   /* FOOTER */
   footer {
     border-top: 1px solid var(--border);
@@ -1753,9 +1794,84 @@
   </div>
 </section>
 
+<!-- SESSION LOG -->
+<div class="divider"></div>
+
+<section class="fade-in">
+  <div class="section-label">Observability</div>
+  <h2>세션 로그 자동 기록</h2>
+  <p class="section-desc">/staff 호출마다 스킬 사용, 산출물 유형, 소요 시간, API 비용이 <code>output/logs/staff_sessions.jsonl</code>에 자동 누적됩니다.</p>
+
+  <div class="log-schema">
+<span class="key">{</span><br>
+&nbsp;&nbsp;<span class="key">"id"</span>:            <span class="val">"20260409_090501"</span>,<br>
+&nbsp;&nbsp;<span class="key">"start_ts"</span>:      <span class="val">"2026-04-09T09:05:01+09:00"</span>,<br>
+&nbsp;&nbsp;<span class="key">"request"</span>:       <span class="val">"Audience API PRD 작성"</span>,<br>
+&nbsp;&nbsp;<span class="key">"skills"</span>:        <span class="val">["/staff", "confluence-reader", "/prd", "/red"]</span>,<br>
+&nbsp;&nbsp;<span class="key">"outputs"</span>:       <span class="val">["prd_20260409_audience_api.md"]</span>,<br>
+&nbsp;&nbsp;<span class="highlight">"output_types"</span>: <span class="val">["prd", "confluence-edit"]</span>,  <span class="comment">// ← 산출물 유형 분류</span><br>
+&nbsp;&nbsp;<span class="key">"status"</span>:        <span class="val">"completed"</span>,<br>
+&nbsp;&nbsp;<span class="key">"model"</span>:         <span class="val">"claude-sonnet-4-6"</span>,<br>
+&nbsp;&nbsp;<span class="key">"cost_usd"</span>:      <span class="val">0.1182</span>,<br>
+&nbsp;&nbsp;<span class="key">"duration_sec"</span>: <span class="val">821</span><br>
+<span class="key">}</span>
+  </div>
+
+  <div class="output-types-grid">
+    <div class="output-type-card">
+      <div class="output-type-key">prd</div>
+      <div class="output-type-desc">PRD 신규 작성</div>
+    </div>
+    <div class="output-type-card">
+      <div class="output-type-key">prd-edit</div>
+      <div class="output-type-desc">PRD 수정·보완</div>
+    </div>
+    <div class="output-type-card">
+      <div class="output-type-key">2-pager</div>
+      <div class="output-type-desc">2-Pager 의사결정 문서</div>
+    </div>
+    <div class="output-type-card">
+      <div class="output-type-key">confluence-page</div>
+      <div class="output-type-desc">Confluence 페이지 신규</div>
+    </div>
+    <div class="output-type-card">
+      <div class="output-type-key">confluence-edit</div>
+      <div class="output-type-desc">Confluence 페이지 수정</div>
+    </div>
+    <div class="output-type-card">
+      <div class="output-type-key">jira-ticket</div>
+      <div class="output-type-desc">Jira 티켓 생성</div>
+    </div>
+    <div class="output-type-card">
+      <div class="output-type-key">diagram</div>
+      <div class="output-type-desc">Mermaid 등 다이어그램</div>
+    </div>
+    <div class="output-type-card">
+      <div class="output-type-key">meeting-notes</div>
+      <div class="output-type-desc">회의록</div>
+    </div>
+    <div class="output-type-card">
+      <div class="output-type-key">analysis</div>
+      <div class="output-type-desc">분석 보고서 / 인사이트</div>
+    </div>
+    <div class="output-type-card">
+      <div class="output-type-key">strategy</div>
+      <div class="output-type-desc">전략 문서 / 자문</div>
+    </div>
+    <div class="output-type-card">
+      <div class="output-type-key">script</div>
+      <div class="output-type-desc">Python / 코드 스크립트</div>
+    </div>
+    <div class="output-type-card">
+      <div class="output-type-key">agent-skill</div>
+      <div class="output-type-desc">에이전트 / 스킬 설계·수정</div>
+    </div>
+  </div>
+</section>
+
 <footer>
   <strong>PM Studio</strong> — AI-Native PM Operating System for Musinsa<br>
-  <span style="margin-top: 6px; display: block;">Built with Claude Sonnet 4.6 · 2026 Q2 · 11 Teams · 7 Initiatives · Databricks · Slack · Figma</span>
+  <span style="margin-top: 6px; display: block;">Built with Claude Sonnet 4.6 · 2026 Q2 · 11 Teams · 7 Initiatives · Databricks · Slack · Figma · Session Logging</span>
 </footer>
 
 <script>

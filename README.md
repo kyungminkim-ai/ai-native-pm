@@ -917,6 +917,53 @@ python3 discovery-intelligence-system/scripts/search_shopify.py \
 
 ---
 
+## 세션 로그 — AI 작업 이력 자동 기록
+
+`/staff` 호출 시마다 `output/logs/staff_sessions.jsonl`에 세션 로그가 자동 기록된다.
+
+```jsonc
+{
+  "id": "20260409_090501",
+  "start_ts": "2026-04-09T09:05:01+09:00",
+  "end_ts":   "2026-04-09T09:18:42+09:00",
+  "request":  "Audience API PRD 작성",
+  "summary":  "Audience API 콘솔 PRD 작성 + Red Team 검증 완료",
+  "skills":   ["/staff", "confluence-reader", "/prd", "/red"],
+  "outputs":  ["prd_20260409_audience_api.md"],
+  "output_types": ["prd", "confluence-edit"],   // ← 산출물 유형 분류
+  "status":   "completed",
+  "model":    "claude-sonnet-4-6",
+  "tokens_in":  18400,
+  "tokens_out": 4200,
+  "cost_usd":   0.1182,
+  "duration_sec": 821
+}
+```
+
+### `output_types` 허용 값
+
+| 유형 | 설명 |
+|------|------|
+| `prd` | PRD 신규 작성 |
+| `prd-edit` | PRD 수정·보완 |
+| `2-pager` | 2-Pager 의사결정 문서 |
+| `confluence-page` | Confluence 페이지 신규 생성 |
+| `confluence-edit` | Confluence 페이지 수정 |
+| `jira-ticket` | Jira 티켓 생성 |
+| `diagram` | Mermaid 등 다이어그램 |
+| `meeting-notes` | 회의록 |
+| `analysis` | 분석 보고서 / 인사이트 |
+| `strategy` | 전략 문서 / 자문 |
+| `report` | C레벨 보고서 |
+| `markdown-doc` | 일반 마크다운 문서 |
+| `script` | Python / 코드 스크립트 |
+| `design-spec` | 화면 설계서 (Figma 기반) |
+| `agent-skill` | 에이전트 / 스킬 설계·수정 |
+
+로그 파일은 `output/logs/staff_sessions.jsonl`에 누적되며, 세션 통계·비용 분석에 활용된다.
+
+---
+
 ## 산출물 경로 전체 목록
 
 | 경로 | 설명 |
@@ -925,6 +972,7 @@ python3 discovery-intelligence-system/scripts/search_shopify.py \
 | `output/draft.html` | Confluence 업로드용 XHTML 초안 |
 | `output/upload_result.json` | 업로드 결과 (페이지 URL 포함) |
 | `output/confluence_skill.log` | API 호출 전체 로그 |
+| `output/logs/staff_sessions.jsonl` | /staff 세션 로그 (스킬·산출물 유형·비용 포함) |
 | `prd-agent-system/output/prd_*.md` | 생성된 PRD 파일 |
 | `prd-agent-system/output/redteam_*.md` | Red Team 검증 질문지 |
 | `prd-agent-system/output/diagrams/*.mmd` | Mermaid 플로우 소스 |
