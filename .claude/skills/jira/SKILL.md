@@ -1,4 +1,12 @@
+---
+description: 자연어 요청을 Jira Epic/Task/Story 티켓으로 변환하여 일괄 생성하는 Jira 티켓 생성 에이전트
+---
+
 # /jira — Jira 티켓 생성 에이전트
+
+## 모델
+
+`claude-haiku-4-5-20251001`
 
 ## 사용법
 

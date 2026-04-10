@@ -1,3 +1,7 @@
+---
+description: 모든 요청을 파악하여 적절한 팀(스킬/에이전트)에 위임하고 복합 워크플로우를 조율하는 비서실장 — 단일 진입점
+---
+
 # /staff — 비서실장
 
 ## 모델
@@ -89,6 +93,15 @@ args가 없으면 "무엇을 도와드릴까요?" 라고 묻는다.
    - **생성된 산출물 유형을 기록해 둔다** (세션 마감 시 `--output-types`에 사용).
      허용 유형: `prd` `prd-edit` `2-pager` `confluence-page` `confluence-edit` `jira-ticket`
      `diagram` `meeting-notes` `analysis` `strategy` `report` `markdown-doc` `script` `design-spec` `agent-skill`
+   - **체크포인트 저장 (3단계 이상 멀티스텝 작업 시)**: 각 주요 단계 완료 후 중간 상태를 저장한다.
+     ```bash
+     python3 /Users/musinsa/Documents/agent_project/pm-studio/scripts/log_staff_session.py \
+       --checkpoint {SESSION_ID} \
+       --cp-progress "Phase 2 완료" \
+       --cp-decisions "결정된 사항 요약" \
+       --cp-next "다음에 할 작업"
+     ```
+     체크포인트 복원: `--resume {SESSION_ID}`
 
    **Step 5. 통합 보고**
    - 모든 팀 작업 완료 후 결과를 통합하여 사용자에게 보고한다.

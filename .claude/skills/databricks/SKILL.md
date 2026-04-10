@@ -1,4 +1,12 @@
+---
+description: Databricks에서 테이블 스키마 탐색, SQL 쿼리 실행, 결과 분석을 수행하는 데이터 탐색 에이전트
+---
+
 # /databricks — Databricks 데이터 탐색 에이전트
+
+## 모델
+
+`claude-haiku-4-5-20251001`
 
 ## 사용법
 ```

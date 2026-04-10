@@ -1,4 +1,12 @@
+---
+description: 회의 내용을 바탕으로 회의록을 작성하고 Confluence 업로드 및 Google Calendar 일정 등록을 수행하는 미팅 에이전트
+---
+
 # /meeting — Meeting Agent
+
+## 모델
+
+`claude-haiku-4-5-20251001`
 
 ## 사용법
 

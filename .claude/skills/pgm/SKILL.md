@@ -1,4 +1,12 @@
+---
+description: Weekly Flash 보고서 생성, 회의록 기반 Jira Initiative 코멘트 작성, 이니셔티브 주간 현황 정리를 수행하는 PGM(Program Management) 에이전트
+---
+
 # /pgm — PGM Command Center
+
+## 모델
+
+`claude-sonnet-4-6`
 
 ## 사용법
 

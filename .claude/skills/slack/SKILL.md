@@ -1,4 +1,12 @@
+---
+description: Slack 채널 대화 조회, 키워드 검색, 메시지 발송을 수행하는 Slack 협업 에이전트
+---
+
 # /slack — Slack 대화 조회 · AI 챗봇 에이전트
+
+## 모델
+
+`claude-haiku-4-5-20251001`
 
 ## 사용법
 ```

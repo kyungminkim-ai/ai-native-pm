@@ -7,10 +7,14 @@ __pycache__/
 .DS_Store
 .vscode/settings.json
 .claude/settings.local.json
+CLAUDE.local.md
 
 # Input/Output — 모든 에이전트 시스템 (runtime data, not committed)
 **/input/
 **/output/
+**/archive/
+# .claude/ 하위 폴더는 archive/ 패턴에서 제외
+!.claude/**
 no_commit/
 
 .obsidian/

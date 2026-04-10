@@ -1,4 +1,12 @@
+---
+description: 대화 내용이나 작업 요청을 분석하여 MEMB 프로젝트에 Jira Task 티켓을 제안하고 생성하는 에이전트
+---
+
 # /task-ticket — MEMB Task 티켓 생성 에이전트
+
+## 모델
+
+`claude-haiku-4-5-20251001`
 
 ## 개요
 

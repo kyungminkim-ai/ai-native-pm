@@ -1,10 +1,24 @@
 ---
 model: claude-haiku-4-5-20251001
+tools:
+  - Read
+  - Bash
+  - mcp__claude_ai_Atlassian__searchAtlassian
+  - mcp__claude_ai_Atlassian__searchConfluenceUsingCql
+  - mcp__claude_ai_Atlassian__getConfluencePage
+  - mcp__claude_ai_Atlassian__getConfluencePageDescendants
+  - mcp__claude_ai_Atlassian__getPagesInConfluenceSpace
+  - mcp__claude_ai_Atlassian__getConfluenceSpaces
+  - mcp__claude_ai_Atlassian__getAccessibleAtlassianResources
+  - mcp__claude_ai_Atlassian__getConfluencePageFooterComments
+  - mcp__claude_ai_Atlassian__getConfluencePageInlineComments
 ---
 
 # confluence-reader — Sub-agent Spec
 
 ## 역할
+
+**모델**: claude-haiku-4-5-20251001
 
 Confluence에서 관련 문서를 검색하고, 사용자 질문에 가장 연관성 높은 섹션을 추출·요약하는 분석 에이전트.
 

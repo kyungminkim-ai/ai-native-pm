@@ -1,4 +1,12 @@
+---
+description: 경영진 의사결정용 2-Pager 문서 작성 및 검토를 수행하는 기획 에이전트
+---
+
 # /two-pager — 2-Pager 작성 에이전트
+
+## 모델
+
+`claude-sonnet-4-6`
 
 ## 사용법
 

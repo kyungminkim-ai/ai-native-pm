@@ -1,10 +1,20 @@
 ---
 model: claude-haiku-4-5-20251001
+tools:
+  - Read
+  - Write
+  - Bash
+  - mcp__claude_ai_Gmail__gmail_create_draft
+  - mcp__claude_ai_Gmail__gmail_get_profile
+  - mcp__claude_ai_Gmail__gmail_list_labels
+  - mcp__claude_ai_Gmail__gmail_list_drafts
 ---
 
 # mail-specialist — Sub-agent Spec
 
 ## 역할
+
+**모델**: claude-haiku-4-5-20251001
 
 Weekly Flash 마크다운 초안을 Gmail 발송용 인라인 CSS HTML로 변환하고,
 사용자 승인 후 Gmail SMTP를 통해 최종 발송하는 이메일 전문가 에이전트.

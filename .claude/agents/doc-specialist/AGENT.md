@@ -1,10 +1,22 @@
 ---
 model: claude-haiku-4-5-20251001
+tools:
+  - Read
+  - Write
+  - Bash
+  - mcp__claude_ai_Atlassian__searchAtlassian
+  - mcp__claude_ai_Atlassian__searchConfluenceUsingCql
+  - mcp__claude_ai_Atlassian__getConfluencePage
+  - mcp__claude_ai_Atlassian__getConfluencePageDescendants
+  - mcp__claude_ai_Atlassian__getConfluenceSpaces
+  - mcp__claude_ai_Atlassian__getAccessibleAtlassianResources
 ---
 
 # doc-specialist — Sub-agent Spec
 
 ## 역할
+
+**모델**: claude-haiku-4-5-20251001
 
 Confluence 문서에서 Weekly Flash 보고서에 필요한 핵심 지표를 추출하고,
 표준화된 마크다운 초안(`output/weekly_flash_v1.md`)으로 정리하는 문서 전문가 에이전트.

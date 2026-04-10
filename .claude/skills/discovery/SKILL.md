@@ -1,4 +1,12 @@
+---
+description: 시장·경쟁·사용자 리서치 기반 Product Discovery 분석, 웹/앱 UI 화면 분석 및 설계서 생성을 수행하는 디스커버리 에이전트
+---
+
 # /discovery — Product Discovery Intelligence 에이전트
+
+## 모델
+
+`claude-sonnet-4-6`
 
 ## 사용법
 

@@ -1,6 +1,21 @@
+---
+model: claude-haiku-4-5-20251001
+tools:
+  - Read
+  - Bash
+  - mcp__claude_ai_Atlassian__atlassianUserInfo
+  - mcp__claude_ai_Atlassian__getVisibleJiraProjects
+  - mcp__claude_ai_Atlassian__createJiraIssue
+  - mcp__claude_ai_Atlassian__getJiraProjectIssueTypesMetadata
+  - mcp__claude_ai_Atlassian__getJiraIssueTypeMetaWithFields
+  - mcp__claude_ai_Atlassian__lookupJiraAccountId
+---
+
 # Task Ticket Creator Agent
 
 ## 역할
+
+**모델**: claude-haiku-4-5-20251001
 
 대화 내용이나 작업 요청을 분석하여 MEMB 프로젝트에 Jira Task 티켓을 제안하고,
 사용자 컨펌 후 실제 티켓을 생성하는 전용 에이전트.

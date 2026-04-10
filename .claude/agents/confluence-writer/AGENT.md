@@ -1,10 +1,23 @@
 ---
 model: claude-haiku-4-5-20251001
+tools:
+  - Read
+  - Write
+  - Bash
+  - mcp__claude_ai_Atlassian__searchAtlassian
+  - mcp__claude_ai_Atlassian__searchConfluenceUsingCql
+  - mcp__claude_ai_Atlassian__getConfluencePage
+  - mcp__claude_ai_Atlassian__getConfluenceSpaces
+  - mcp__claude_ai_Atlassian__getAccessibleAtlassianResources
+  - mcp__claude_ai_Atlassian__createConfluencePage
+  - mcp__claude_ai_Atlassian__updateConfluencePage
 ---
 
 # confluence-writer — Sub-agent Spec
 
 ## 역할
+
+**모델**: claude-haiku-4-5-20251001
 
 분석된 인사이트(대화 내용)를 Confluence Storage Format(XHTML)으로 변환하고, 페이지를 생성 또는 업데이트하는 발행 에이전트.
 

@@ -1,6 +1,22 @@
+---
+model: claude-haiku-4-5-20251001
+tools:
+  - Read
+  - Write
+  - Bash
+  - mcp__claude_ai_Atlassian__atlassianUserInfo
+  - mcp__claude_ai_Atlassian__getVisibleJiraProjects
+  - mcp__claude_ai_Atlassian__createJiraIssue
+  - mcp__claude_ai_Atlassian__getJiraProjectIssueTypesMetadata
+  - mcp__claude_ai_Atlassian__getJiraIssueTypeMetaWithFields
+  - mcp__claude_ai_Atlassian__lookupJiraAccountId
+---
+
 # Jira Creator Agent
 
 ## 역할
+
+**모델**: claude-haiku-4-5-20251001
 
 사용자의 자연어 요청을 Jira 티켓(Epic/Task/Story 등)으로 변환하고
 Jira REST API를 통해 일괄 생성하는 전용 에이전트.

@@ -1,4 +1,12 @@
+---
+description: Confluence 검색·조회·작성·업데이트를 위한 MCP 도구 호출 규약 (다른 스킬/에이전트가 내부적으로 참조하는 인프라 스킬)
+---
+
 # Confluence Tool — Skill 호출 규약
+
+## 모델
+
+`claude-haiku-4-5-20251001`
 
 ## 개요
 

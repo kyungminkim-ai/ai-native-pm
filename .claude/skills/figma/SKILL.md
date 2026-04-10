@@ -1,4 +1,12 @@
+---
+description: Figma URL에서 화면을 분석하여 디자인 스펙 문서 생성, PRD 초안 작성, Before/After 비교, UX 카피 추출을 수행하는 디자인 에이전트
+---
+
 # /figma — Figma 화면 분석 · 디자인 스펙 에이전트
+
+## 모델
+
+`claude-haiku-4-5-20251001`
 
 ## 사용법
 ```
