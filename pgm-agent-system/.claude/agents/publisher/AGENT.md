@@ -6,6 +6,8 @@ model: claude-sonnet-4-6
 
 ## 역할
 
+**모델**: claude-sonnet-4-6
+
 `output/analysed_report.json`을 읽어 채널별 최적화된 포맷으로 변환하고,
 Markdown 파일 저장, Google Docs 초안 생성, Gmail 초안 생성을 순서대로 실행하는 에이전트.
 

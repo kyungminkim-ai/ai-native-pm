@@ -20,12 +20,19 @@ description: 시장·경쟁·사용자 리서치 기반 Product Discovery 분석
   --input {폴더경로}  로컬 파일 제공 시 (CSV 리뷰, md 문서, png 스크린샷 등)
 
   --ref all          외부 벤더 레퍼런스 전체 수집 (Amplitude + Braze + Shopify 자동 선택)
-  --ref amplitude    Amplitude GitHub Docs만 수집
+  --ref amplitude    Amplitude GitHub Docs만 수집 (제품 기능/API 문서 참조용)
   --ref braze        Braze GitHub Docs만 수집
   --ref shopify      Shopify App Store 벤치마크만 수집
 
+  --data amplitude   Amplitude MCP로 내부 실사용 데이터 수집 (행동 데이터 기반 Discovery 강화)
+                     → --ref amplitude(외부 문서)와 다름: 실제 이벤트/퍼널/코호트 데이터 조회
+
   --initiative TM-XXXX  이니셔티브 컨텍스트 로드
 ```
+
+> **`--ref amplitude` vs `--data amplitude` 구분**
+> - `--ref amplitude`: Amplitude 공식 문서(GitHub)에서 제품 기능·설계 방식 참조 → 벤치마킹·레퍼런스 분석에 사용
+> - `--data amplitude`: Amplitude MCP로 **우리 서비스의 실제 행동 데이터** 조회 → 현황 파악·가설 검증에 사용
 
 ## 실행 규칙
 
@@ -41,6 +48,10 @@ description: 시장·경쟁·사용자 리서치 기반 Product Discovery 분석
 3. CLAUDE.md에 정의된 모드별 워크플로우를 실행한다:
    - **Competitor 모드**: Phase 0(선택) → Phase 1(시장분석 · 병렬) → Phase 2~5(페르소나 · 인터뷰 · 합성 · 보고서)
    - **Reference 모드**: Phase 0(선택) → Phase R(레퍼런스 분석) → 보고서
+4. **[레지스트리 등록]** 보고서 저장 직후 등록한다:
+   ```bash
+   python3 scripts/registry.py register --type discovery --path discovery-intelligence-system/output/{파일명}.md --topic "{탐색 주제}"
+   ```
 
 ## 예시
 

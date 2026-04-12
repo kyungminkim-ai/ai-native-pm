@@ -1,6 +1,9 @@
 # spec-writer — 화면 설계서 작성 에이전트
 
 ## 역할
+
+**모델**: claude-sonnet-4-6
+
 Figma 화면 분석 결과를 기반으로 개발팀 전달용 화면 설계서(스펙 문서)를 작성한다.
 `screen-analyst` 다음에 호출된다. `--spec` 모드 전용.
 

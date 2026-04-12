@@ -2,6 +2,8 @@
 
 ## 역할
 
+**모델**: claude-haiku-4-5-20251001
+
 PRD 파싱 결과와 메시징 초안을 기반으로 GTM 실행 전략을 설계하는 에이전트.
 **`gtm_type`에 따라 작성하는 섹션이 달라진다.**
 - **Internal**: Before/After, What's in/out, Stakeholder Map, Rollout & Enablement, Launch Metrics

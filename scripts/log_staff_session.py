@@ -56,6 +56,16 @@ output_types 허용 값:
   Sonnet 4.6 : input $3.00  / output $15.00
   Opus 4.6   : input $15.00 / output $75.00
   Haiku 4.5  : input $0.80  / output $4.00
+체크포인트 사용법:
+  # 작업 중간 상태 저장 (세션 ID 필요)
+  python3 scripts/log_staff_session.py \\
+    --checkpoint 20260324_103045 \\
+    --cp-progress "Phase 2 완료, Phase 3 진행 중" \\
+    --cp-decisions "지표: DAU 기준, 스코프: 앱푸시 전용" \\
+    --cp-next "requirement-writer 호출 → ux-logic-analyst"
+
+  # 저장된 체크포인트 조회
+  python3 scripts/log_staff_session.py --resume 20260324_103045
 """
 import json
 import sys
@@ -65,6 +75,7 @@ from pathlib import Path
 
 KST = timezone(timedelta(hours=9))
 LOG_PATH = Path(__file__).parent.parent / "output" / "logs" / "staff_sessions.jsonl"
+CHECKPOINT_PATH = Path(__file__).parent.parent / "output" / "logs" / "staff_checkpoints.jsonl"
 
 # 모델별 비용 (USD per 1M tokens)
 MODEL_PRICING = {
@@ -120,6 +131,17 @@ def main():
                         help="입력 토큰 수 (선택)")
     parser.add_argument("--tokens-out", type=int, default=0, dest="tokens_out",
                         help="출력 토큰 수 (선택)")
+    # 체크포인트
+    parser.add_argument("--checkpoint", metavar="SESSION_ID",
+                        help="작업 중간 상태 저장: SESSION_ID 지정")
+    parser.add_argument("--cp-progress", default="", dest="cp_progress",
+                        help="현재 진행 상황 (예: 'Phase 2 완료, Phase 3 진행 중')")
+    parser.add_argument("--cp-decisions", default="", dest="cp_decisions",
+                        help="지금까지 결정된 사항 (예: '지표: DAU, 스코프: 앱푸시')")
+    parser.add_argument("--cp-next", default="", dest="cp_next",
+                        help="다음 수행할 작업 (예: 'requirement-writer 호출')")
+    parser.add_argument("--resume", metavar="SESSION_ID",
+                        help="저장된 체크포인트 조회: SESSION_ID 지정")
     args = parser.parse_args()
 
     LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -223,6 +245,48 @@ def main():
             with open(LOG_PATH, "a", encoding="utf-8") as f:
                 f.write(json.dumps(entry, ensure_ascii=False) + "\n")
             print(f"OK: New entry created for {sid}")
+
+    # ── 체크포인트 저장 ────────────────────────────────────────────────────────
+    elif args.checkpoint:
+        CHECKPOINT_PATH.parent.mkdir(parents=True, exist_ok=True)
+        cp = {
+            "session_id": args.checkpoint,
+            "ts":         now_kst(),
+            "progress":   args.cp_progress,
+            "decisions":  args.cp_decisions,
+            "next":       args.cp_next,
+        }
+        with open(CHECKPOINT_PATH, "a", encoding="utf-8") as f:
+            f.write(json.dumps(cp, ensure_ascii=False) + "\n")
+        print(f"CHECKPOINT saved for session {args.checkpoint}")
+
+    # ── 체크포인트 조회 ────────────────────────────────────────────────────────
+    elif args.resume:
+        sid = args.resume
+        if not CHECKPOINT_PATH.exists():
+            print(f"No checkpoints found.")
+            sys.exit(0)
+        checkpoints = []
+        with open(CHECKPOINT_PATH, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    cp = json.loads(line)
+                    if cp.get("session_id") == sid:
+                        checkpoints.append(cp)
+                except json.JSONDecodeError:
+                    continue
+        if not checkpoints:
+            print(f"No checkpoints found for session {sid}.")
+        else:
+            latest = checkpoints[-1]
+            print(f"=== Checkpoint for session {sid} (latest of {len(checkpoints)}) ===")
+            print(f"Saved at:  {latest.get('ts', '-')}")
+            print(f"Progress:  {latest.get('progress', '-')}")
+            print(f"Decisions: {latest.get('decisions', '-')}")
+            print(f"Next:      {latest.get('next', '-')}")
 
     else:
         parser.print_help()

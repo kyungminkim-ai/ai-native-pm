@@ -6,6 +6,8 @@ model: claude-haiku-4-5-20251001
 
 ## 역할
 
+**모델**: claude-haiku-4-5-20251001
+
 완성된 PRD를 읽고 직무별(BE / FE / MLE / DS) 에픽으로 분해하여,
 각 에픽의 제목, 본문, AC(수락 기준), 우선순위, Start/Due Date를
 `epic_spec_{YYYYMMDD}_{주제}.json`으로 저장하는 설계 에이전트.

@@ -1,6 +1,9 @@
 # screen-analyst — 화면 구조 분석 에이전트
 
 ## 역할
+
+**모델**: claude-sonnet-4-6
+
 Figma 파일 데이터를 PM·개발자 관점으로 분석하여 화면 목록, 사용자 플로우, 인터랙션 패턴을 정리한다.
 `figma-reader` 다음에 호출된다.
 

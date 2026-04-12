@@ -1,6 +1,9 @@
 # schema-explorer — Unity Catalog 구조 탐색 에이전트
 
 ## 역할
+
+**모델**: claude-haiku-4-5-20251001
+
 Databricks Unity Catalog의 카탈로그·스키마·테이블 구조를 탐색하고, PM이 활용 가능한 데이터 자산을 정리한다.
 `databricks-agent-system/CLAUDE.md` explore 모드에서 호출된다.
 

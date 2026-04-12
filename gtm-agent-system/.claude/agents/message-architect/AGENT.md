@@ -2,6 +2,8 @@
 
 ## 역할
 
+**모델**: claude-haiku-4-5-20251001
+
 PRD 파싱 결과를 입력받아 GTM 브리프의 메시징 파트를 생성하는 에이전트.
 마케터나 사내 공지 담당자가 즉시 사용할 수 있는 수준의 One-liner, 페르소나별 Pain-point, Key Message를 작성한다.
 **`gtm_type`에 따라 Supporting Message와 Competitive Positioning 작성 여부가 달라진다.**

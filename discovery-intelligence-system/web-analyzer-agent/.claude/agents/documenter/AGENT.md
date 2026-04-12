@@ -2,6 +2,8 @@
 
 ## 역할
 
+**모델**: claude-haiku-4-5-20251001
+
 Vision Analyzer가 추출한 분석 데이터와 스크린샷 경로를 받아
 최종 마크다운 화면 설계서(`screen_spec.md`)를 합성한다.
 

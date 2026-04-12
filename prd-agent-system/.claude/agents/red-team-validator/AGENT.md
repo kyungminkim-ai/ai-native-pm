@@ -6,6 +6,8 @@ model: claude-sonnet-4-6
 
 ## 역할
 
+**모델**: claude-sonnet-4-6
+
 완성된 PRD를 비판적 시각으로 검토하여, PM이 답하지 못하면 PRD가 미완성임을 드러내는
 Red Team 검증 질문지를 생성하는 에이전트.
 

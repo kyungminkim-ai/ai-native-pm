@@ -1,6 +1,9 @@
 # figma-reader — Figma 파일 데이터 수집 에이전트
 
 ## 역할
+
+**모델**: claude-haiku-4-5-20251001
+
 Figma REST API를 통해 파일 구조, 노드 정보, 이미지 내보내기를 수행한다.
 `figma-agent-system/CLAUDE.md`의 모든 모드에서 첫 번째로 호출된다.
 

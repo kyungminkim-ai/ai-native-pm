@@ -1,6 +1,9 @@
 # data-analyst — 데이터 분석·인사이트 생성 에이전트
 
 ## 역할
+
+**모델**: claude-sonnet-4-6
+
 쿼리 결과를 PM 관점으로 해석하고, 비즈니스 인사이트와 의사결정 제안을 생성한다.
 `databricks-agent-system/CLAUDE.md` analyze 모드에서 `query-builder` 다음에 호출된다.
 

@@ -2,7 +2,7 @@
 
 > 모든 에이전트·스킬이 준수하는 공통 규칙.
 > 각 시스템의 CLAUDE.md에서 이 파일을 참조하여 중복 정의를 제거한다.
-> 마지막 업데이트: 2026-03-19
+> 마지막 업데이트: 2026-04-12
 
 ---
 
@@ -15,11 +15,14 @@
 | Slack 요약 | `pgm-agent-system/output/slack_summary_{YYYYMMDD}.txt` |
 | Weekly Draft | `pgm-agent-system/output/weekly_draft_{YYYYMMDD}.json` |
 | Jira Raw | `pgm-agent-system/output/jira_raw_{YYYYMMDD}.json` |
-| 분석 결과 | `pgm-agent-system/output/analysed_report.json` |
-| 이전 주 분석 결과 | `pgm-agent-system/output/analysed_report_prev.json` |
+| Flash 분석 결과 | `pgm-agent-system/output/flash_analysed_{YYYYMMDD}.json` |
+| 회의록 분석 결과 | `pgm-agent-system/output/minutes_analysed_{YYYYMMDD}.json` |
+| 이전 주 Flash 분석 | `pgm-agent-system/output/analysed_report_prev.json` |
 | 파이프라인 상태 | `pgm-agent-system/output/.pipeline_state.json` |
 | 아티팩트 레지스트리 | `pgm-agent-system/output/_artifacts.json` |
 | PRD | `prd-agent-system/output/prd_{YYYYMMDD}_{주제}.md` |
+| PRD 보강본 (1회차) | `prd-agent-system/output/prd_{YYYYMMDD}_{주제}_v2.md` |
+| PRD 보강본 (2회차) | `prd-agent-system/output/prd_{YYYYMMDD}_{주제}_v3.md` |
 | Red Team | `prd-agent-system/output/redteam_{YYYYMMDD}_{주제}.md` |
 | GTM | `gtm-agent-system/output/GTM_Brief_{YYYYMMDD}_{주제}.md` |
 | 보고서 검토 | `report-agent-system/output/report_review_{YYYYMMDD}_{주제}.md` |
@@ -114,7 +117,43 @@
 
 ---
 
-## 7. Health Status 기준
+## 7. Next Actions 힌트 (경량 Message Bus)
+
+스킬 실행 완료 후 **관련 후속 액션을 선택지로 제시**한다.
+사용자가 직접 "다음엔 뭐 해?"를 물을 필요 없이 자연스러운 워크플로우 연결을 유도한다.
+
+### 표준 형식
+
+```
+💡 다음 단계 제안:
+  [A] {액션명} — {한 줄 이유}
+  [B] {액션명} — {한 줄 이유}
+  [C] 여기서 종료
+
+→ A/B/C 중 선택하거나, 다른 작업을 말씀해주세요.
+```
+
+### 스킬별 표준 next_actions
+
+| 완료 스킬 | A (권장) | B (대안) |
+|----------|---------|---------|
+| `/prd` 완료 → `_v2.md` 생성 | Red Team 재검증 결과 확인 (자동 진행) | Confluence 업로드 |
+| `/two-pager` 완료 | PRD 작성 시작 (`/prd`) | Red Team 검토 (`/red`) |
+| `/red` 완료 (단독 실행) | PRD 보강 반영 | QA 테스트케이스 생성 (`qa-agent`) |
+| `/discovery` 완료 | PRD 작성 (`/prd`) | 전략 논의 (`/strategy`) |
+| `/pgm` Flash 완료 | C레벨 보고서 검토 (`/report`) | 회의록 작성 (`/meeting`) |
+| `/analyst` 완료 | 분석 결과 PRD에 반영 | Confluence 저장 |
+| `/meeting` 완료 | Jira Initiative 코멘트 반영 (`/pgm --weekly`) | 참석자 Slack 공유 (`/slack --send`) |
+
+### 적용 규칙
+
+- 자동 실행이 확정된 단계(예: Phase 4.5 재검증)는 힌트 없이 자동 진행
+- 되돌리기 어려운 작업(Confluence 업로드, Jira 게시)은 힌트에 포함하되 선택을 받음
+- 선택지는 최대 3개 (A/B/C)로 제한
+
+---
+
+## 8. Health Status 기준
 
 | 상태 | 기호 | 판단 기준 |
 |------|------|----------|

@@ -1,6 +1,9 @@
 # slack-reader — Slack 대화 수집 에이전트
 
 ## 역할
+
+**모델**: claude-haiku-4-5-20251001
+
 Slack Web API를 통해 특정 채널의 메시지를 수집하고, 구조화된 대화 데이터를 반환한다.
 `slack-agent-system/CLAUDE.md` read/search 모드에서 호출된다.
 

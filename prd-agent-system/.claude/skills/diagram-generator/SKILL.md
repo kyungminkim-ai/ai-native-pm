@@ -1,15 +1,20 @@
-# Diagram Generator — Mermaid.js + SVG/HTML 생성 · 검증 · 렌더링 규약
+# Diagram Generator — 렌더링 스크립트 도구 스킬
 
-## 개요
+## 역할 정의
 
-PRD 작성 과정에서 필요한 모든 다이어그램을 생성·렌더링하는 스킬.
-- **Mermaid**: 사용자 플로우, 상태 전이, API 시퀀스 → `render.py`로 렌더링
-- **SVG/HTML**: 시스템 아키텍처, 비교 매트릭스, 타임라인, IA 등 → `render_html.py`로 렌더링
+> **이 스킬은 렌더링 스크립트(render.py, render_html.py) 사용 도구 스킬입니다.**
+> 다이어그램을 독립 컨텍스트에서 생성·렌더링하는 에이전트 실행이 필요하면
+> `prd-agent-system/.claude/agents/diagram-generator/AGENT.md`를 호출하세요.
 
-에이전트로 사용 시: `prd-agent-system/.claude/agents/diagram-generator/AGENT.md` 참조.
+**이 스킬이 하는 것**: Mermaid 문법 검증 체크리스트 + 렌더링 스크립트 실행 규약 제공
+**에이전트가 하는 것**: 독립 컨텍스트에서 다이어그램 전체 생성 + 렌더링 + 결과 반환
 
-**검증**: LLM이 직접 문법 규칙을 적용한다.
-**렌더링**: `scripts/render.py` (.mmd → .html) / `scripts/render_html.py` (.svg → .html)
+---
+
+## 렌더링 스크립트
+
+- **Mermaid (.mmd → .html)**: `scripts/render.py`
+- **SVG (.svg → .html)**: `scripts/render_html.py`
 
 ---
 

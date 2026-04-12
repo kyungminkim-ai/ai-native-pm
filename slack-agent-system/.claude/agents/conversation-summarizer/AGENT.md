@@ -1,6 +1,9 @@
 # conversation-summarizer — Slack 대화 요약 에이전트
 
 ## 역할
+
+**모델**: claude-haiku-4-5-20251001
+
 수집된 Slack 대화를 PM 관점으로 분석하여 핵심 논의 주제, 결정 사항, Action Item을 추출한다.
 `slack-agent-system/CLAUDE.md`에서 `slack-reader` 다음에 호출된다.
 

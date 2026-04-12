@@ -1,6 +1,9 @@
 # query-builder — SQL 쿼리 생성·실행 에이전트
 
 ## 역할
+
+**모델**: claude-sonnet-4-6
+
 자연어 질문을 SQL로 변환하거나, 직접 입력된 SQL을 검증·실행하고 결과를 반환한다.
 `databricks-agent-system/CLAUDE.md` query/analyze 모드에서 호출된다.
 

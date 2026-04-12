@@ -1,10 +1,12 @@
 ---
-model: claude-sonnet-4-6
+model: claude-haiku-4-5-20251001
 ---
 
 # minutes-generator — Sub-agent Spec
 
 ## 역할
+
+**모델**: claude-haiku-4-5-20251001
 
 `output/analysed_report.json`의 분석 결과를 바탕으로 핵심 아젠다를 선별하고,
 Google Docs용 상세 회의록 초안과 Slack용 초간결 사전 아젠다 요약을 생성하는 에이전트.
