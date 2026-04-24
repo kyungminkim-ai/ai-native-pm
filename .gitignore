@@ -6,15 +6,34 @@ __pycache__/
 *.pyc
 .DS_Store
 .vscode/settings.json
-.claude/settings.local.json
 CLAUDE.local.md
 
-# Input/Output — 모든 에이전트 시스템 (runtime data, not committed)
+# Input/Output/Archive — 모든 에이전트 시스템 (runtime data, not committed)
 **/input/
 **/output/
 **/archive/
-# .claude/ 하위 폴더는 archive/ 패턴에서 제외
+# .claude/ 하위 폴더는 위 패턴에서 제외 (스킬/에이전트 코드는 커밋)
 !.claude/**
+# 단, .claude 내 runtime 파일은 제외 (!.claude/** 뒤에 와야 우선 적용)
+.claude/settings.local.json
+.claude/**/output/
+.claude/worktrees/
 no_commit/
+
+# Agent runtime data & logs
+match-push-agent-system/data/
+match-push-agent-system/logs/
+
+# 루트 레벨 개인 작업 산출물 (에이전트가 생성한 문서, 리포지터리 구조 아님)
+match_*.md
+2pager_*.md
+rough_note_*.md
+customer_growth_*.md
+app_push.md
+reference_conversation.md
+
+# 테스트 데이터 및 로컬 설정
+test_input/
+config/
 
 .obsidian/

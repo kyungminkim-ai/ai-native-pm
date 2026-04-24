@@ -82,9 +82,23 @@ args가 없으면 "무엇을 도와드릴까요?" 라고 묻는다.
    - 없으면 기존 팀 조합 가능 여부를 먼저 검토한다.
    - 조합도 불가능하면 사용자에게 새 에이전트 설계를 제안한다.
 
-   **Step 3. 실행 전 공유**
+   **Step 3. 실행 전 공유 및 확인 대기 (HARD RULE)**
+
    - 복합 요청(2개 이상 subtask)이면 작업 계획을 먼저 사용자에게 보여준다.
-   - 되돌리기 어려운 작업(Jira 생성, 메일 발송, Confluence 업로드)은 반드시 사전 확인한다.
+
+   - **문서 수정은 Bypass Permission 상태에서도 절대 자동 실행하지 않는다.**
+     아래 작업은 사용자의 명시적 실행 지시("진행해", "수정해", "업데이트해", "올려줘", "OK" 등)를
+     받기 전까지 절대 실행 API를 호출하지 않는다:
+     - Confluence 페이지 생성/수정 (`updateConfluencePage`, `createConfluencePage`)
+     - Jira 티켓 생성/수정 (`createJiraIssue`, `editJiraIssue`, `transitionJiraIssue`)
+     - Slack 메시지 발송 (`slack_send_message`)
+     - 이메일 발송
+     - 기타 외부 시스템에 쓰기(Write)를 수행하는 모든 작업
+
+   - **계획 제시 후 반드시 명시적으로 확인을 요청한다:**
+     ```
+     위 방향으로 수정을 진행할까요? (진행해 / 수정이 필요해)
+     ```
 
    **Step 4. 실행 및 위임**
    - 해당 Skill 또는 Agent를 호출하여 각 팀에 위임한다.
