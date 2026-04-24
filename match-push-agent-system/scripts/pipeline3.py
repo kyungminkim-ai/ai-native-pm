@@ -123,7 +123,11 @@ def _check_row(row: pd.Series, seen_ad_codes: set, brand_df: Optional[pd.DataFra
         issues.append("brand_id_missing")
     elif brand_df is not None and not brand_df.empty:
         brand_nm_kr, _ = lookup_brand_names(brand_id, brand_df)
-        brand_nm_verified = brand_nm_kr or brand_id
+        if brand_nm_kr:
+            brand_nm_verified = brand_nm_kr
+        else:
+            brand_nm_verified = "확인 필요"
+            issues.append(f"brand_not_in_list({brand_id})")
 
     # ── 10. LLM confidence 임계값 미달 ──────────────────────────────────
     try:
