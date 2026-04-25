@@ -145,7 +145,7 @@ def process_row(row: pd.Series, brand_df: pd.DataFrame, current_ad_code: str, ca
     result["contents_v2"]   = append_unsubscribe(v2["message"]) if v2["message"] else None
     result["confidence_v2"] = v2["confidence"]
 
-    # ── V3 SCARCITY ───────────────────────────────────────────────────────
+    # ── V3 BEST (V1+V2 합성 최선책) ──────────────────────────────────────
     v3 = generate_v3(
         title=result["title"],
         brand=brand_name,
@@ -153,11 +153,13 @@ def process_row(row: pd.Series, brand_df: pd.DataFrame, current_ad_code: str, ca
         content_type=result["content_type"] or "",
         target=result["target"],
         remarks=remarks,
+        v1_message=v1["message"] or "",
+        v2_message=v2["message"] or "",
     )
     result["contents_v3"]   = append_unsubscribe(v3["message"]) if v3["message"] else None
     result["confidence_v3"] = v3["confidence"]
 
-    # ── 발송 본문 자동 선택 (V1 우선 → V3 희소성 → V2 기본) ─────────────
+    # ── 발송 본문 자동 선택 (V3 최선책 우선 → V1 → V2 기본) ─────────────
     selected_msg, selected_src = select_contents(
         result["contents_v1"], result["contents_v2"], result["contents_v3"]
     )

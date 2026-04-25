@@ -345,10 +345,6 @@ def build_webhook_contents(contents: str) -> str:
     return (contents or "").replace("\n", "\\n")
 
 
-_V1_PRIORITY_PATTERN  = re.compile(r'%|한정|단독')
-_V3_SCARCITY_PATTERN  = re.compile(r'마감|선착순|한정수량|오늘까지|오늘|D-day|품절|마지막')
-
-
 def select_contents(
     v1_message: Optional[str],
     v2_message: Optional[str],
@@ -357,14 +353,14 @@ def select_contents(
     """V1·V2·V3 중 발송 본문(contents)을 자동 선택한다.
 
     우선순위:
-      1. V1 — 할인율(%) 또는 "한정"/"단독" 키워드 포함 시 (혜택 수치 강조)
-      2. V3 — 긴급성/희소성 키워드 포함 시 (단, V1이 선택되지 않은 경우)
-      3. V2 — 그 외 기본값 (브랜드감성)
+      1. V3 — V1+V2를 합성한 최선책 (항상 최우선)
+      2. V1 — V3 생성 실패 시 폴백
+      3. V2 — V1도 없을 때 최후 폴백
 
     반환: (선택된 메시지, 소스 "v1"|"v2"|"v3")
     """
-    if v1_message and _V1_PRIORITY_PATTERN.search(v1_message):
-        return (v1_message, "v1")
-    if v3_message and _V3_SCARCITY_PATTERN.search(v3_message):
+    if v3_message:
         return (v3_message, "v3")
+    if v1_message:
+        return (v1_message, "v1")
     return (v2_message, "v2")

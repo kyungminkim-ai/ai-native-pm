@@ -56,8 +56,8 @@ CONTENTS_V1_MIN_LEN = 40   # V1 혜택강조
 CONTENTS_V1_MAX_LEN = 60
 CONTENTS_V2_MIN_LEN = 25   # V2 브랜드감성
 CONTENTS_V2_MAX_LEN = 45
-CONTENTS_V3_MIN_LEN = 30   # V3 희소성/긴급성
-CONTENTS_V3_MAX_LEN = 50
+CONTENTS_V3_MIN_LEN = 25   # V3 최선책 합성 (V2 기준)
+CONTENTS_V3_MAX_LEN = 45
 MEANINGLESS_TITLES = {"테스트", "123", "123123", "asdf", "test", "제목", ""}
 
 # 수신거부 문구

@@ -47,7 +47,7 @@ OUTPUT_COLUMNS = [
     "braze_campaign_name", "title", "contents", "landing_url", "image_url",
     "push_url", "feed_url", "webhook_contents", "stopped",
     # 검수용 컬럼 (담당자 검토용 — Braze 등록 시 제외)
-    "[검수용] contents_v1_benefit", "[검수용] contents_v2_brand", "[검수용] contents_v3_scarcity",
+    "[검수용] contents_v1_benefit", "[검수용] contents_v2_brand", "[검수용] contents_v3_best",
     "[검수용] contents_source",
     "[검수용] brand_nm_verified",
     "[검수용] title_source", "[검수용] confidence_v1",
@@ -320,7 +320,7 @@ def save_final(result_df: pd.DataFrame, send_dt: str):
     rename_map = {
         "contents_v1":       "[검수용] contents_v1_benefit",
         "contents_v2":       "[검수용] contents_v2_brand",
-        "contents_v3":       "[검수용] contents_v3_scarcity",
+        "contents_v3":       "[검수용] contents_v3_best",
         "contents_source":   "[검수용] contents_source",
         "brand_nm_verified": "[검수용] brand_nm_verified",
         "title_source":      "[검수용] title_source",
@@ -436,7 +436,7 @@ def save_final_range(result_df: pd.DataFrame, date_from: str, date_to: str) -> P
     rename_map = {
         "contents_v1":       "[검수용] contents_v1_benefit",
         "contents_v2":       "[검수용] contents_v2_brand",
-        "contents_v3":       "[검수용] contents_v3_scarcity",
+        "contents_v3":       "[검수용] contents_v3_best",
         "contents_source":   "[검수용] contents_source",
         "brand_nm_verified": "[검수용] brand_nm_verified",
         "title_source":      "[검수용] title_source",

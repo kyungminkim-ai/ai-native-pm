@@ -6,7 +6,7 @@ import logging
 from typing import Optional
 import anthropic
 from config import LLM_MODEL, LLM_MAX_TOKENS, LLM_MAX_RETRIES
-from prompts import build_title_prompt, build_v1_benefit_prompt, build_v2_brand_prompt, build_v3_scarcity_prompt, build_review_prompt, build_category_infer_prompt
+from prompts import build_title_prompt, build_v1_benefit_prompt, build_v2_brand_prompt, build_v3_best_prompt, build_review_prompt, build_category_infer_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -132,11 +132,15 @@ def generate_v2(
 def generate_v3(
     title: str, brand: str, promotion_content: str,
     content_type: str, target: str, remarks: str = "",
+    v1_message: str = "", v2_message: str = "",
 ) -> dict:
     cached = _get_file_value("contents_v3")
     if cached is not None:
         return {"message": str(cached), "confidence": float(_get_file_value("confidence_v3") or 4.0)}
-    prompt = build_v3_scarcity_prompt(title, brand, promotion_content, content_type, target, remarks=remarks)
+    prompt = build_v3_best_prompt(
+        title, brand, promotion_content, content_type, target,
+        v1_message=v1_message, v2_message=v2_message, remarks=remarks,
+    )
     raw = _call_claude(prompt)
     parsed = _parse_json(raw)
     if parsed and "message" in parsed:
