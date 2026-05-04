@@ -6,7 +6,7 @@
 
 사용자가 `/staff`를 통해 명시적으로 호출하거나, 직접 대화할 때도 항상 이 역할로 동작한다.
 
-> 공통 규약: `CONVENTIONS.md` | 세부 역량: `CAPABILITY_MAP.md` | 복합 패턴: `WORKFLOW_PATTERNS.md`
+> 공통 규약: `CONVENTIONS.md` | 세부 역량: `CAPABILITY_MAP.md` | 복합 패턴: `WORKFLOW_PATTERNS.md` | 팀 컨텍스트: `input/state/product_context.md`
 
 ---
 
@@ -91,8 +91,10 @@
 | **다음 주/달 플래닝** (wiki + 피드백 기반 액션 아이템) | Skill: `/chronicle plan [week\|month]` |
 | **커리어 포트폴리오 추출** (STAR 스토리 + 이력서용 역량 정리) | Skill: `/chronicle portfolio` |
 | **업무 wiki 수동 갱신** | Skill: `/chronicle ingest` |
+| **의사결정 기록** (PRD 방향·스코프 결정·대안 선택 로그) | `input/state/decisions/` 템플릿 사용 (직접 작성) |
 
 > 자주 발생하는 복합 패턴 (기획 파이프라인, 성과 보고, 런치 파이프라인 등): `WORKFLOW_PATTERNS.md` 참조
+> State 레이어 (팀 컨텍스트·의사결정 로그): `WORKFLOW_PATTERNS.md §State Layer` 참조
 
 ---
 

@@ -267,10 +267,36 @@ Discovery → PRD 작성 → GTM 브리프 → Confluence 저장
 ```
 input/initiatives/
 ├── index.md                   ← 전체 이니셔티브 목록
-└── 2026Q1/
-    └── {TICKET-ID}_{이름}/
+└── 2026Q2/
+    └── {이니셔티브-ID}_{이름}/
         ├── meta.json          ← 티켓 메타 (Space, 기간, 상태)
         ├── context.md         ← 배경·목표·성공지표
         ├── decisions.md       ← 의사결정 로그
         └── output/            ← 생성 산출물
 ```
+
+---
+
+## State Layer — 팀 컨텍스트 로드
+
+이니셔티브 ID 없이 일반 요청이 들어올 때, `input/state/product_context.md`를 참조하여
+현재 집중 분기·이니셔티브·북극성 지표·핵심 가설을 컨텍스트로 활용한다.
+
+```
+input/state/
+├── product_context.md    ← 현재 제품 컨텍스트 (분기별 업데이트)
+└── decisions/            ← PM 의사결정 로그
+    ├── _template.md      ← 의사결정 기록 템플릿
+    └── YYYY-MM-DD-{주제}.md  ← 개별 의사결정 파일
+```
+
+### 의사결정 기록 패턴
+
+**트리거**: "이 결정 기록해줘", "PRD 방향 결정 남겨줘", "오늘 논의 결과 저장해줘"
+
+**실행 순서**:
+1. `input/state/decisions/_template.md` 기반으로 파일 생성
+2. 파일명: `YYYY-MM-DD-{결정-주제}.md` (예: `2026-05-04-타겟팅-자동화-범위.md`)
+3. 맥락·결정 내용·대안·근거 작성 후 저장
+
+**원칙**: 결정은 실시간 기록. `chronicle` 스킬의 주간 회고 시 자동 참조됨.

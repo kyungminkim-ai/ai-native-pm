@@ -1,3 +1,5 @@
+> **참고 문서** — 에이전트가 직접 로드하지 않는 인간 독자용 가이드입니다.
+
 # 기회-해결책 트리(OST) 프레임워크 가이드
 
 출처: Teresa Torres의 Continuous Discovery Habits 기반
