@@ -190,6 +190,56 @@ Discovery → PRD 작성 → GTM 브리프 → Confluence 저장
 
 ---
 
+## Pattern K: 신기능 기획 풀 파이프라인
+
+```
+/market-research → /discovery → /prd → /red → /gtm
+     시장 구조         기회 발굴    PRD    검증    런치 계획
+```
+
+**트리거**: "처음부터 전체 기획해줘", "시장 파악부터 런치 계획까지", "신기능 기획 풀 사이클"
+
+**실행 순서**:
+1. `/market-research [시장명] --focus all` → 페르소나 + 경쟁사 + 고객 여정 파악
+2. `/discovery [주제] --initiative TM-XXXX` → 기회 발굴 + 화이트스페이스 확인
+3. `/prd TM-XXXX` → PRD 작성 (1, 2 결과를 Rough Note로 활용)
+4. `/red {PRD 경로}` → Red Team 검증
+5. `/gtm --prd {PRD 경로} --stage launch` → GTM 체크리스트 + 채널 전략
+
+**단계별 단독 실행**:
+- 시장 구조만: `/market-research [시장명]`
+- 기회 발굴만: `/discovery [주제]`
+- 런치 계획만: `/gtm --prd {PRD 경로}`
+
+**병렬 가능**: Step 1 + Step 2 (market-research + discovery는 독립 실행 가능)
+
+---
+
+## Pattern L: 분기 시작 OKR 파이프라인
+
+```
+/market-research → /strategy → /okr → /jira (에픽 분해)
+     시장 구조         방향 논의    OKR    이니셔티브 등록
+```
+
+**트리거**: "분기 시작해보자", "Q2 OKR 수립해줘", "이번 분기 목표 잡아줘"
+
+**실행 순서**:
+1. `/market-research --focus competitor` → 경쟁 구도 + 기회 포인트 파악 (선택)
+2. `/strategy "이번 분기 우선순위 어떻게 가져가야 해?"` → 방향성 논의
+3. `/okr --draft --quarter Q{N}` → Objective + Key Results 초안
+4. 사용자 OKR 검토 및 확정
+5. `/jira` → 확정된 KR 기반 이니셔티브 · 에픽 생성
+
+**OKR 확정 후 주간 연계**:
+```
+/pgm [JIRA_KEY]  →  Flash Report에 OKR 현황 섹션 자동 포함
+```
+
+**병렬 가능**: Step 1 + Step 2 (독립 실행 가능)
+
+---
+
 ## 병렬 실행 가능 조합
 
 | 병렬 가능 | 조건 |
@@ -198,6 +248,8 @@ Discovery → PRD 작성 → GTM 브리프 → Confluence 저장
 | `/pgm --full` 내 jira-parser + confluence 페이지 로드 | 독립적, 동시 실행 가능 |
 | `confluence-reader` + 다른 검색 | 서로 독립 |
 | `/databricks --explore` + `confluence-reader` | 서로 독립 |
+| `/market-research` + `/discovery` | 서로 독립 (Pattern K Step 1+2 병렬 가능) |
+| `/market-research` + `/strategy` | 서로 독립 (Pattern L Step 1+2 병렬 가능) |
 | `/slack --today` + `/databricks --query` | 서로 독립 |
 | `figma-reader` + `schema-explorer` | 서로 독립 (figma --prd 시 병렬 가능) |
 

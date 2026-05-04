@@ -1,1893 +1,816 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PM Studio — AI-Native PM Operating System</title>
-<style>
-  :root {
-    --bg: #0d0f14;
-    --bg2: #141720;
-    --bg3: #1c2030;
-    --border: #2a2f45;
-    --accent: #5b6af8;
-    --accent2: #7c3aed;
-    --accent3: #06b6d4;
-    --green: #10b981;
-    --yellow: #f59e0b;
-    --red: #ef4444;
-    --text: #e2e8f0;
-    --text2: #94a3b8;
-    --text3: #64748b;
-    --gradient: linear-gradient(135deg, #5b6af8, #7c3aed);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-
-  /* HERO */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 80px 24px 60px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero::before {
-    content: '';
-    position: absolute;
-    width: 800px; height: 800px;
-    background: radial-gradient(circle, rgba(91,106,248,0.12) 0%, transparent 70%);
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-  }
-
-  .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(91,106,248,0.12);
-    border: 1px solid rgba(91,106,248,0.3);
-    border-radius: 999px;
-    padding: 6px 16px;
-    font-size: 13px;
-    color: #818cf8;
-    margin-bottom: 28px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-
-  .hero-badge .dot {
-    width: 7px; height: 7px;
-    background: var(--accent);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.8); }
-  }
-
-  h1 {
-    font-size: clamp(48px, 7vw, 88px);
-    font-weight: 800;
-    letter-spacing: -2px;
-    line-height: 1.05;
-    margin-bottom: 12px;
-  }
-
-  h1 .gradient-text {
-    background: var(--gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .hero-sub {
-    font-size: clamp(16px, 2vw, 22px);
-    color: var(--text2);
-    max-width: 600px;
-    margin: 16px auto 0;
-  }
-
-  .hero-tagline {
-    margin-top: 32px;
-    font-size: 14px;
-    color: var(--text3);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 24px;
-    background: var(--bg2);
-    max-width: 560px;
-    line-height: 1.8;
-  }
-
-  .hero-tagline strong {
-    color: var(--text2);
-  }
-
-  .hero-stats {
-    display: flex;
-    gap: 40px;
-    margin-top: 56px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .stat {
-    text-align: center;
-  }
-
-  .stat-num {
-    font-size: 36px;
-    font-weight: 800;
-    background: var(--gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1;
-  }
-
-  .stat-label {
-    font-size: 12px;
-    color: var(--text3);
-    margin-top: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  .scroll-hint {
-    position: absolute;
-    bottom: 32px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: var(--text3);
-    font-size: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    animation: bounce 2s infinite;
-  }
-
-  .scroll-hint svg { opacity: 0.4; }
-
-  @keyframes bounce {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50% { transform: translateX(-50%) translateY(6px); }
-  }
-
-  /* SECTIONS */
-  section {
-    padding: 100px 24px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .section-label {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: #818cf8;
-    margin-bottom: 12px;
-    font-weight: 600;
-  }
-
-  h2 {
-    font-size: clamp(28px, 4vw, 42px);
-    font-weight: 800;
-    letter-spacing: -1px;
-    margin-bottom: 16px;
-  }
-
-  .section-desc {
-    color: var(--text2);
-    font-size: 16px;
-    max-width: 560px;
-    margin-bottom: 56px;
-  }
-
-  /* ARCHITECTURE */
-  .arch-container {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 48px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .arch-container::before {
-    content: '';
-    position: absolute;
-    top: -1px; left: 40px; right: 40px; height: 2px;
-    background: var(--gradient);
-    border-radius: 999px;
-  }
-
-  .arch-title {
-    text-align: center;
-    font-size: 13px;
-    color: var(--text3);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 40px;
-  }
-
-  .arch-layer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
-  }
-
-  .arch-chief {
-    background: linear-gradient(135deg, rgba(91,106,248,0.2), rgba(124,58,237,0.2));
-    border: 1px solid rgba(91,106,248,0.4);
-    border-radius: 14px;
-    padding: 16px 40px;
-    font-weight: 700;
-    font-size: 15px;
-    color: #c7d2fe;
-    text-align: center;
-    position: relative;
-    width: fit-content;
-    min-width: 280px;
-  }
-
-  .arch-chief-sub {
-    font-size: 11px;
-    color: #818cf8;
-    font-weight: 400;
-    margin-top: 2px;
-  }
-
-  .arch-connector {
-    width: 2px;
-    height: 32px;
-    background: linear-gradient(to bottom, rgba(91,106,248,0.6), rgba(91,106,248,0.1));
-  }
-
-  .arch-teams {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    width: 100%;
-  }
-
-  .arch-team {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    text-align: center;
-    transition: all 0.2s;
-    cursor: default;
-  }
-
-  .arch-team:hover {
-    border-color: rgba(91,106,248,0.4);
-    transform: translateY(-2px);
-    background: rgba(91,106,248,0.05);
-  }
-
-  .arch-team-icon {
-    font-size: 22px;
-    margin-bottom: 6px;
-  }
-
-  .arch-team-name {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 2px;
-  }
-
-  .arch-team-role {
-    font-size: 11px;
-    color: var(--text3);
-  }
-
-  .arch-connector-row {
-    display: flex;
-    gap: 12px;
-    width: 100%;
-    justify-content: space-between;
-    padding: 0 8px;
-  }
-
-  .arch-connector-row .line {
-    flex: 1;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .arch-connector-row .line::after {
-    content: '';
-    display: block;
-    width: 1px;
-    height: 100%;
-    background: linear-gradient(to bottom, rgba(91,106,248,0.3), rgba(91,106,248,0.05));
-  }
-
-  /* TEAMS GRID */
-  .teams-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 20px;
-  }
-
-  .team-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 28px;
-    transition: all 0.25s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .team-card:hover {
-    border-color: rgba(91,106,248,0.4);
-    transform: translateY(-3px);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-  }
-
-  .team-card::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 2px;
-    opacity: 0;
-    transition: opacity 0.25s;
-  }
-
-  .team-card:hover::after { opacity: 1; }
-
-  .team-card.planning::after { background: linear-gradient(90deg, #5b6af8, #818cf8); }
-  .team-card.marketing::after { background: linear-gradient(90deg, #ec4899, #f97316); }
-  .team-card.pgm::after { background: linear-gradient(90deg, #06b6d4, #5b6af8); }
-  .team-card.discovery::after { background: linear-gradient(90deg, #10b981, #06b6d4); }
-  .team-card.knowledge::after { background: linear-gradient(90deg, #f59e0b, #f97316); }
-  .team-card.comms::after { background: linear-gradient(90deg, #7c3aed, #5b6af8); }
-  .team-card.meeting::after { background: linear-gradient(90deg, #ef4444, #f59e0b); }
-  .team-card.review::after { background: linear-gradient(90deg, #64748b, #94a3b8); }
-  .team-card.data::after { background: linear-gradient(90deg, #f97316, #ef4444); }
-  .team-card.collab::after { background: linear-gradient(90deg, #22d3ee, #10b981); }
-  .team-card.design::after { background: linear-gradient(90deg, #a78bfa, #ec4899); }
-
-  .team-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    margin-bottom: 20px;
-  }
-
-  .team-emoji {
-    font-size: 28px;
-    line-height: 1;
-    flex-shrink: 0;
-  }
-
-  .team-name {
-    font-size: 17px;
-    font-weight: 700;
-    margin-bottom: 2px;
-  }
-
-  .team-name-en {
-    font-size: 11px;
-    color: var(--text3);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  .team-desc {
-    font-size: 13px;
-    color: var(--text2);
-    margin-bottom: 20px;
-    line-height: 1.6;
-  }
-
-  .skills-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .skill-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 4px 10px;
-    font-size: 12px;
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    color: #a5b4fc;
-    font-weight: 500;
-  }
-
-  .skill-tag.featured {
-    background: rgba(91,106,248,0.1);
-    border-color: rgba(91,106,248,0.3);
-    color: #c7d2fe;
-  }
-
-  .outputs {
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid var(--border);
-  }
-
-  .outputs-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text3);
-    margin-bottom: 8px;
-  }
-
-  .output-item {
-    font-size: 12px;
-    color: var(--text3);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    line-height: 1.9;
-  }
-
-  .output-item::before {
-    content: '→';
-    color: var(--accent);
-    font-size: 10px;
-  }
-
-  /* WORKFLOW */
-  .workflows-grid {
-    display: grid;
-    gap: 20px;
-  }
-
-  .workflow-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 32px;
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: 32px;
-    align-items: start;
-    transition: all 0.2s;
-  }
-
-  .workflow-card:hover {
-    border-color: rgba(91,106,248,0.3);
-  }
-
-  .workflow-label {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    padding: 4px 10px;
-    border-radius: 4px;
-    margin-bottom: 8px;
-  }
-
-  .pattern-a .workflow-label { background: rgba(91,106,248,0.15); color: #818cf8; }
-  .pattern-b .workflow-label { background: rgba(6,182,212,0.15); color: #22d3ee; }
-  .pattern-c .workflow-label { background: rgba(16,185,129,0.15); color: #34d399; }
-  .pattern-d .workflow-label { background: rgba(245,158,11,0.15); color: #fbbf24; }
-
-  .workflow-title {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-
-  .workflow-desc {
-    font-size: 13px;
-    color: var(--text3);
-  }
-
-  .workflow-steps {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .wf-step {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 13px;
-  }
-
-  .wf-cmd {
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 6px 12px;
-    font-size: 12px;
-    color: #a5b4fc;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  .wf-desc {
-    color: var(--text2);
-    font-size: 12px;
-  }
-
-  .wf-arrow {
-    color: var(--text3);
-    font-size: 10px;
-    padding-left: 52px;
-  }
-
-  /* PGM PIPELINE */
-  .pipeline-container {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 40px;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .pipeline-title {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 8px;
-  }
-
-  .pipeline-cmd {
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 14px;
-    color: #a5b4fc;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    padding: 8px 16px;
-    border-radius: 8px;
-    display: inline-block;
-    margin-bottom: 36px;
-  }
-
-  .pipeline-steps {
-    display: flex;
-    align-items: stretch;
-    gap: 0;
-    overflow-x: auto;
-    padding-bottom: 8px;
-  }
-
-  .pipeline-step {
-    flex: 1;
-    min-width: 140px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 16px;
-    position: relative;
-    text-align: center;
-  }
-
-  .pipeline-step + .pipeline-step {
-    margin-left: 12px;
-  }
-
-  .pipeline-step:not(:last-child)::after {
-    content: '→';
-    position: absolute;
-    right: -14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--accent);
-    font-size: 14px;
-    z-index: 1;
-  }
-
-  .step-num {
-    width: 24px; height: 24px;
-    background: rgba(91,106,248,0.15);
-    border: 1px solid rgba(91,106,248,0.3);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 700;
-    color: #818cf8;
-    margin: 0 auto 10px;
-  }
-
-  .step-name {
-    font-size: 12px;
-    font-weight: 700;
-    margin-bottom: 6px;
-    color: var(--text);
-  }
-
-  .step-artifacts {
-    font-size: 10px;
-    color: var(--text3);
-    line-height: 1.8;
-  }
-
-  .step-artifacts span {
-    display: block;
-    background: var(--bg);
-    border-radius: 3px;
-    padding: 2px 4px;
-    margin-top: 2px;
-  }
-
-  .pipeline-outputs {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-top: 32px;
-  }
-
-  .output-card {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
-  }
-
-  .output-card-icon {
-    font-size: 18px;
-    margin-bottom: 8px;
-  }
-
-  .output-card-title {
-    font-size: 13px;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-
-  .output-card-desc {
-    font-size: 11px;
-    color: var(--text3);
-    line-height: 1.6;
-  }
-
-  /* COMMANDS TABLE */
-  .commands-section {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    overflow: hidden;
-  }
-
-  .commands-header {
-    padding: 24px 32px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .commands-header h3 {
-    font-size: 16px;
-    font-weight: 700;
-  }
-
-  .cmd-count {
-    background: rgba(91,106,248,0.15);
-    color: #818cf8;
-    font-size: 12px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 999px;
-  }
-
-  .commands-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  .commands-table th {
-    text-align: left;
-    padding: 12px 32px;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text3);
-    background: var(--bg3);
-    font-weight: 600;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .commands-table td {
-    padding: 14px 32px;
-    font-size: 13px;
-    border-bottom: 1px solid rgba(42,47,69,0.5);
-    vertical-align: middle;
-  }
-
-  .commands-table tr:last-child td { border-bottom: none; }
-
-  .commands-table tr:hover td {
-    background: rgba(91,106,248,0.03);
-  }
-
-  .cmd-name {
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    color: #a5b4fc;
-    font-weight: 600;
-    font-size: 13px;
-  }
-
-  .cmd-team-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 11px;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-weight: 600;
-  }
-
-  .badge-planning { background: rgba(91,106,248,0.12); color: #818cf8; }
-  .badge-marketing { background: rgba(236,72,153,0.12); color: #f472b6; }
-  .badge-pgm { background: rgba(6,182,212,0.12); color: #22d3ee; }
-  .badge-discovery { background: rgba(16,185,129,0.12); color: #34d399; }
-  .badge-knowledge { background: rgba(245,158,11,0.12); color: #fbbf24; }
-  .badge-comms { background: rgba(124,58,237,0.12); color: #a78bfa; }
-  .badge-meeting { background: rgba(239,68,68,0.12); color: #f87171; }
-  .badge-review { background: rgba(100,116,139,0.12); color: #94a3b8; }
-  .badge-data { background: rgba(249,115,22,0.12); color: #fb923c; }
-  .badge-collab { background: rgba(34,211,238,0.12); color: #22d3ee; }
-  .badge-design { background: rgba(167,139,250,0.12); color: #a78bfa; }
-
-  .cmd-output-tag {
-    display: inline-block;
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 3px;
-    background: rgba(16,185,129,0.1);
-    color: #34d399;
-    border: 1px solid rgba(16,185,129,0.2);
-  }
-
-  /* PRINCIPLES */
-  .principles-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 16px;
-  }
-
-  .principle-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 24px;
-    transition: all 0.2s;
-  }
-
-  .principle-card:hover {
-    border-color: rgba(91,106,248,0.3);
-    background: rgba(91,106,248,0.04);
-  }
-
-  .principle-icon {
-    font-size: 28px;
-    margin-bottom: 12px;
-  }
-
-  .principle-title {
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 6px;
-  }
-
-  .principle-desc {
-    font-size: 12px;
-    color: var(--text3);
-    line-height: 1.6;
-  }
-
-  /* STATUS INDICATORS */
-  .status-grid {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .status-indicator {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 16px;
-    font-size: 13px;
-  }
-
-  .status-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  .status-dot.green { background: var(--green); box-shadow: 0 0 8px var(--green); }
-  .status-dot.yellow { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
-  .status-dot.red { background: var(--red); box-shadow: 0 0 8px var(--red); }
-
-  /* SESSION LOG */
-  .log-schema {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px 24px;
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 12px;
-    color: var(--text2);
-    line-height: 1.8;
-    overflow-x: auto;
-    margin: 20px 0;
-  }
-  .log-schema .key { color: #79b8ff; }
-  .log-schema .val { color: #f8c555; }
-  .log-schema .comment { color: var(--text3); }
-  .log-schema .highlight { color: var(--green); font-weight: 600; }
-
-  .output-types-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 10px;
-    margin: 16px 0;
-  }
-  .output-type-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 14px;
-  }
-  .output-type-key {
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 12px;
-    color: var(--green);
-    margin-bottom: 4px;
-  }
-  .output-type-desc {
-    font-size: 12px;
-    color: var(--text3);
-  }
-
-  /* FOOTER */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 40px 24px;
-    text-align: center;
-    color: var(--text3);
-    font-size: 13px;
-  }
-
-  footer strong { color: var(--text2); }
-
-  /* DIVIDER */
-  .divider {
-    height: 1px;
-    background: var(--border);
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  /* RESPONSIVE */
-  @media (max-width: 768px) {
-    .arch-teams { grid-template-columns: repeat(2, 1fr); }
-    .workflow-card { grid-template-columns: 1fr; }
-    .pipeline-outputs { grid-template-columns: 1fr; }
-    .commands-table th:nth-child(3),
-    .commands-table td:nth-child(3) { display: none; }
-  }
-
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-  /* FADE IN */
-  .fade-in {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-
-  .fade-in.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PM-Studio — AI-Native PM Workspace</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #21262d;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --accent2: #3fb950;
+      --accent3: #d2a8ff;
+      --accent4: #ffa657;
+      --accent5: #ff7b72;
+      --accent6: #79c0ff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 32px 40px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(88,166,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .header-inner { max-width: 1200px; margin: 0 auto; }
+    .header-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--accent), var(--accent3));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    .logo-text h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+    .logo-text span { font-size: 12px; color: var(--muted); }
+    .badge {
+      background: rgba(88,166,255,0.15);
+      color: var(--accent);
+      border: 1px solid rgba(88,166,255,0.3);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .header-desc { margin-top: 16px; color: var(--muted); font-size: 14px; max-width: 600px; }
+    .header-meta { margin-top: 8px; font-size: 12px; color: #484f58; }
+    .header-meta a { color: var(--accent); text-decoration: none; }
+    .header-meta a:hover { text-decoration: underline; }
+
+    /* Layout */
+    .container { max-width: 1200px; margin: 0 auto; padding: 32px 40px; }
+
+    /* Stats Row */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .stat-card:hover { border-color: var(--accent); }
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--card-color, var(--accent));
+      border-radius: 12px 12px 0 0;
+    }
+    .stat-value { font-size: 32px; font-weight: 700; color: var(--text); line-height: 1; }
+    .stat-label { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .stat-sub { font-size: 11px; color: #484f58; margin-top: 4px; }
+
+    /* Section */
+    .section { margin-bottom: 40px; }
+    .section-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-icon { font-size: 18px; }
+    .section-title { font-size: 16px; font-weight: 600; }
+    .section-count {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Skills Grid */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+    }
+    .skill-category {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      transition: border-color 0.2s, transform 0.1s;
+    }
+    .skill-category:hover { border-color: var(--border2, #444d56); transform: translateY(-1px); }
+    .cat-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .cat-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--cat-color, var(--accent));
+      flex-shrink: 0;
+    }
+    .cat-name { font-size: 13px; font-weight: 600; }
+    .cat-skills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .skill-tag {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 11px;
+      color: var(--muted);
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      transition: all 0.15s;
+      cursor: default;
+    }
+    .skill-tag:hover { background: rgba(88,166,255,0.1); border-color: var(--accent); color: var(--accent); }
+
+    /* Agent Systems */
+    .agents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .agent-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      transition: border-color 0.2s;
+    }
+    .agent-card:hover { border-color: var(--accent3); }
+    .agent-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .agent-desc { font-size: 11px; color: var(--muted); margin-bottom: 10px; line-height: 1.5; }
+    .agent-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+    .agent-tag {
+      background: rgba(63,185,80,0.1);
+      color: var(--accent2);
+      border: 1px solid rgba(63,185,80,0.25);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 10px;
+    }
+
+    /* Activity */
+    .activity-table { width: 100%; border-collapse: collapse; }
+    .activity-table th {
+      text-align: left; padding: 8px 12px;
+      font-size: 11px; color: var(--muted);
+      font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+    }
+    .activity-table td {
+      padding: 10px 12px;
+      font-size: 12px;
+      border-bottom: 1px solid rgba(48,54,61,0.5);
+      vertical-align: middle;
+    }
+    .activity-table tr:last-child td { border-bottom: none; }
+    .activity-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .status-badge {
+      display: inline-block;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .status-completed { background: rgba(63,185,80,0.15); color: var(--accent2); }
+    .status-started { background: rgba(255,166,87,0.15); color: var(--accent4); }
+    .skill-pill {
+      display: inline-block;
+      background: rgba(88,166,255,0.1);
+      color: var(--accent6);
+      border: 1px solid rgba(88,166,255,0.2);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 10px;
+      font-family: monospace;
+      margin: 1px;
+    }
+
+    /* Top Skills Bar Chart */
+    .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+    .bar-row { display: flex; align-items: center; gap: 12px; }
+    .bar-label { font-size: 12px; color: var(--muted); width: 160px; flex-shrink: 0; font-family: monospace; }
+    .bar-track { flex: 1; background: var(--surface2); border-radius: 4px; height: 8px; overflow: hidden; }
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent3));
+      transition: width 1s ease;
+    }
+    .bar-count { font-size: 12px; color: var(--muted); width: 40px; text-align: right; flex-shrink: 0; }
+
+    /* Recent Outputs */
+    .output-list { display: flex; flex-direction: column; gap: 8px; }
+    .output-item {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      transition: border-color 0.2s;
+    }
+    .output-item:hover { border-color: #444d56; }
+    .output-type {
+      font-size: 10px; font-weight: 600; text-transform: uppercase;
+      border-radius: 4px; padding: 3px 8px;
+      flex-shrink: 0; min-width: 70px; text-align: center;
+    }
+    .type-prd { background: rgba(88,166,255,0.15); color: var(--accent); }
+    .type-2pager { background: rgba(210,168,255,0.15); color: var(--accent3); }
+    .type-analysis { background: rgba(63,185,80,0.15); color: var(--accent2); }
+    .type-skill { background: rgba(255,166,87,0.15); color: var(--accent4); }
+    .type-doc { background: rgba(255,123,114,0.15); color: var(--accent5); }
+    .output-name { font-size: 13px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .output-date { font-size: 11px; color: var(--muted); flex-shrink: 0; }
+
+    /* Architecture Diagram */
+    .arch-wrapper {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+    }
+    .arch-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: wrap;
+      row-gap: 16px;
+    }
+    .arch-node {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      text-align: center;
+      min-width: 120px;
+    }
+    .arch-node.center {
+      background: linear-gradient(135deg, rgba(88,166,255,0.15), rgba(210,168,255,0.1));
+      border-color: rgba(88,166,255,0.4);
+    }
+    .arch-node-icon { font-size: 24px; margin-bottom: 4px; }
+    .arch-node-name { font-size: 12px; font-weight: 600; }
+    .arch-node-desc { font-size: 10px; color: var(--muted); margin-top: 2px; }
+    .arch-arrow {
+      font-size: 20px; color: var(--border);
+      padding: 0 8px;
+      flex-shrink: 0;
+    }
+    .arch-inputs { display: flex; flex-direction: column; gap: 8px; }
+    .arch-outputs { display: flex; flex-direction: column; gap: 8px; }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 40px;
+      text-align: center;
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer p { font-size: 12px; color: #484f58; }
+    .footer a { color: var(--muted); text-decoration: none; }
+    .footer a:hover { color: var(--accent); }
+
+    /* 2-col layout */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    @media (max-width: 768px) {
+      .two-col { grid-template-columns: 1fr; }
+      .container { padding: 20px; }
+      .header { padding: 20px; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-badge">
-    <span class="dot"></span>
-    AI-Native PM Operating System
-  </div>
-  <h1>
-    <span class="gradient-text">PM Studio</span>
-  </h1>
-  <p class="hero-sub">AI가 초안을 만들고, PM이 전략을 결정한다.</p>
-  <div class="hero-tagline">
-    <strong>11개 에이전트 팀</strong>이 기획 · 검증 · QA · GTM · 리포팅 · 회의 · 문서 · 데이터 · 디자인을<br>
-    하나의 명령으로 자동화하는 Musinsa PM 운영 시스템
-  </div>
-
-  <div class="hero-stats">
-    <div class="stat">
-      <div class="stat-num">24</div>
-      <div class="stat-label">Slash Commands</div>
+<!-- Header -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="logo">
+        <div class="logo-icon">🤖</div>
+        <div class="logo-text">
+          <h1>PM-Studio</h1>
+          <span>AI-Native PM Workspace</span>
+        </div>
+      </div>
+      <span class="badge">v2026.05</span>
     </div>
-    <div class="stat">
-      <div class="stat-num">11</div>
-      <div class="stat-label">AI Agent Teams</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">9</div>
-      <div class="stat-label">External APIs</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">7</div>
-      <div class="stat-label">2026 Q2 과제</div>
-    </div>
-  </div>
-
-  <div class="scroll-hint">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M12 5v14M5 12l7 7 7-7"/>
-    </svg>
+    <p class="header-desc">
+      Claude Code 기반 AI PM 에이전트 시스템. PRD·2-Pager·데이터 분석·CRM 캠페인 등
+      PM 업무 전반을 스킬과 에이전트로 자동화하는 비서실장 아키텍처.
+    </p>
+    <p class="header-meta">
+      GitHub: <a href="https://github.com/kyungminkim-ai/ai-native-pm" target="_blank">kyungminkim-ai/ai-native-pm</a>
+      &nbsp;·&nbsp; Last updated: 2026-05-04
+    </p>
   </div>
 </div>
 
-<div class="divider"></div>
+<!-- Main -->
+<div class="container">
 
-<!-- ARCHITECTURE -->
-<section class="fade-in">
-  <div class="section-label">Architecture</div>
-  <h2>시스템 구조</h2>
-  <p class="section-desc">비서실장이 모든 요청을 받아 8개 전문팀에 위임하고 결과를 통합합니다.</p>
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card" style="--card-color: #58a6ff;">
+      <div class="stat-value">33</div>
+      <div class="stat-label">등록 스킬 (Skills)</div>
+      <div class="stat-sub">기획·데이터·협업·전략</div>
+    </div>
+    <div class="stat-card" style="--card-color: #3fb950;">
+      <div class="stat-value">559</div>
+      <div class="stat-label">총 세션 (Sessions)</div>
+      <div class="stat-sub">완료율 78.4% (438/559)</div>
+    </div>
+    <div class="stat-card" style="--card-color: #d2a8ff;">
+      <div class="stat-value">11</div>
+      <div class="stat-label">에이전트 시스템</div>
+      <div class="stat-sub">PRD·데이터·CRM·분석 외</div>
+    </div>
+    <div class="stat-card" style="--card-color: #ffa657;">
+      <div class="stat-value">58+</div>
+      <div class="stat-label">산출물 (Outputs)</div>
+      <div class="stat-sub">PRD·2-Pager·분석 리포트</div>
+    </div>
+    <div class="stat-card" style="--card-color: #ff7b72;">
+      <div class="stat-value">25+</div>
+      <div class="stat-label">MCP 연동</div>
+      <div class="stat-sub">Confluence·Jira·Slack·Amplitude</div>
+    </div>
+  </div>
 
-  <div class="arch-container">
-    <div class="arch-title">PM Studio — 11-Team Cooperative Agent System</div>
-    <div class="arch-layer">
-      <div class="arch-chief">
-        <div>비서실장 (Chief of Staff)</div>
-        <div class="arch-chief-sub">요청 분해 · 팀 라우팅 · 결과 통합</div>
-      </div>
-      <div class="arch-connector"></div>
-      <div class="arch-teams" style="grid-template-columns: repeat(5, 1fr);">
-        <div class="arch-team">
-          <div class="arch-team-icon">📐</div>
-          <div class="arch-team-name">기획팀</div>
-          <div class="arch-team-role">PRD · Red Team · QA · Epic</div>
+  <!-- Architecture -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏗️</span>
+      <span class="section-title">아키텍처 개요</span>
+    </div>
+    <div class="arch-wrapper">
+      <div class="arch-flow">
+        <!-- Inputs -->
+        <div class="arch-inputs">
+          <div class="arch-node">
+            <div class="arch-node-icon">💬</div>
+            <div class="arch-node-name">자연어 요청</div>
+            <div class="arch-node-desc">사용자 입력</div>
+          </div>
+          <div class="arch-node">
+            <div class="arch-node-icon">📄</div>
+            <div class="arch-node-name">input/</div>
+            <div class="arch-node-desc">이니셔티브·회의록·KB</div>
+          </div>
+          <div class="arch-node">
+            <div class="arch-node-icon">🔗</div>
+            <div class="arch-node-name">MCP 연동</div>
+            <div class="arch-node-desc">Jira·Confluence·Slack</div>
+          </div>
         </div>
-        <div class="arch-team">
-          <div class="arch-team-icon">📣</div>
-          <div class="arch-team-name">마케팅팀</div>
-          <div class="arch-team-role">GTM Brief</div>
+
+        <div class="arch-arrow">→</div>
+
+        <!-- Center: Staff -->
+        <div class="arch-node center">
+          <div class="arch-node-icon">🤵</div>
+          <div class="arch-node-name">/staff 비서실장</div>
+          <div class="arch-node-desc">요청 분해·라우팅·조율</div>
         </div>
-        <div class="arch-team">
-          <div class="arch-team-icon">⚡</div>
-          <div class="arch-team-name">PGM팀</div>
-          <div class="arch-team-role">Flash · 회의록 · Jira</div>
+
+        <div class="arch-arrow">→</div>
+
+        <!-- Skills -->
+        <div class="arch-node">
+          <div class="arch-node-icon">⚡</div>
+          <div class="arch-node-name">33개 스킬</div>
+          <div class="arch-node-desc">기획·데이터·협업·분석</div>
         </div>
-        <div class="arch-team">
-          <div class="arch-team-icon">🔍</div>
-          <div class="arch-team-name">디스커버리팀</div>
-          <div class="arch-team-role">시장분석 · 페르소나</div>
-        </div>
-        <div class="arch-team">
-          <div class="arch-team-icon">📚</div>
-          <div class="arch-team-name">지식팀</div>
-          <div class="arch-team-role">Confluence · Notion</div>
-        </div>
-        <div class="arch-team">
-          <div class="arch-team-icon">💬</div>
-          <div class="arch-team-name">커뮤니케이션팀</div>
-          <div class="arch-team-role">Email · Jira 티켓</div>
-        </div>
-        <div class="arch-team">
-          <div class="arch-team-icon">📋</div>
-          <div class="arch-team-name">회의팀</div>
-          <div class="arch-team-role">회의록 · Calendar</div>
-        </div>
-        <div class="arch-team">
-          <div class="arch-team-icon">📊</div>
-          <div class="arch-team-name">회고팀</div>
-          <div class="arch-team-role">주간 작업 로그</div>
-        </div>
-        <div class="arch-team">
-          <div class="arch-team-icon">🧪</div>
-          <div class="arch-team-name">QA팀</div>
-          <div class="arch-team-role">테스트케이스 · PM 브리핑</div>
-        </div>
-        <div class="arch-team">
-          <div class="arch-team-icon">🗄️</div>
-          <div class="arch-team-name">데이터팀</div>
-          <div class="arch-team-role">Databricks · SQL · 분석</div>
-        </div>
-        <div class="arch-team">
-          <div class="arch-team-icon">💬</div>
-          <div class="arch-team-name">협업팀</div>
-          <div class="arch-team-role">Slack 조회 · 요약 · 챗봇</div>
-        </div>
-        <div class="arch-team">
-          <div class="arch-team-icon">🎨</div>
-          <div class="arch-team-name">디자인팀</div>
-          <div class="arch-team-role">Figma 분석 · 설계서</div>
+
+        <div class="arch-arrow">→</div>
+
+        <!-- Outputs -->
+        <div class="arch-outputs">
+          <div class="arch-node">
+            <div class="arch-node-icon">📝</div>
+            <div class="arch-node-name">output/</div>
+            <div class="arch-node-desc">PRD·2-Pager·분석</div>
+          </div>
+          <div class="arch-node">
+            <div class="arch-node-icon">🌐</div>
+            <div class="arch-node-name">외부 시스템</div>
+            <div class="arch-node-desc">Confluence·Jira 저장</div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</section>
 
-<div class="divider"></div>
-
-<!-- TEAMS -->
-<section class="fade-in">
-  <div class="section-label">Teams</div>
-  <h2>에이전트 팀 상세</h2>
-  <p class="section-desc">각 팀은 명확한 역할과 산출물을 가진 독립적인 AI 에이전트입니다.</p>
-
-  <div class="teams-grid">
-
-    <div class="team-card planning">
-      <div class="team-header">
-        <div class="team-emoji">📐</div>
-        <div>
-          <div class="team-name">기획팀</div>
-          <div class="team-name-en">Planning Team</div>
-        </div>
-      </div>
-      <div class="team-desc">아이디어를 실행 가능한 스펙으로 변환. 경쟁사 분석, 페르소나, 기능 정의부터 QA 문서 · Jira 등록까지 자동화.</div>
-      <div class="skills-list">
-        <span class="skill-tag featured">/prd</span>
-        <span class="skill-tag featured">/red</span>
-        <span class="skill-tag featured">qa-agent</span>
-        <span class="skill-tag featured">/epic</span>
-      </div>
-      <div class="outputs">
-        <div class="outputs-label">산출물</div>
-        <div class="output-item">PRD 문서 (9섹션 구조)</div>
-        <div class="output-item">Red Team 검증 리포트</div>
-        <div class="output-item">QA 테스트케이스 + PM 브리핑</div>
-        <div class="output-item">Jira Epic 티켓 자동 생성</div>
-      </div>
+  <!-- Skills by Category -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">⚡</span>
+      <span class="section-title">스킬 맵</span>
+      <span class="section-count">33개</span>
     </div>
+    <div class="skills-grid">
 
-    <div class="team-card marketing">
-      <div class="team-header">
-        <div class="team-emoji">📣</div>
-        <div>
-          <div class="team-name">마케팅팀</div>
-          <div class="team-name-en">Marketing Team</div>
+      <div class="skill-category">
+        <div class="cat-header">
+          <div class="cat-dot" style="--cat-color: #58a6ff;"></div>
+          <span class="cat-name">기획 (Planning)</span>
+        </div>
+        <div class="cat-skills">
+          <span class="skill-tag">/prd</span>
+          <span class="skill-tag">/two-pager</span>
+          <span class="skill-tag">/red</span>
+          <span class="skill-tag">/epic</span>
+          <span class="skill-tag">/okr</span>
+          <span class="skill-tag">/gtm</span>
         </div>
       </div>
-      <div class="team-desc">PRD를 시장 전략으로 번역. 내부/외부 GTM 자동 감지, 메시지 아키텍처와 채널 플랜까지 원스텝 생성.</div>
-      <div class="skills-list">
-        <span class="skill-tag featured">/gtm</span>
-        <span class="skill-tag">internal GTM</span>
-        <span class="skill-tag">external GTM</span>
-      </div>
-      <div class="outputs">
-        <div class="outputs-label">산출물</div>
-        <div class="output-item">GTM Brief (내부 8섹션 / 외부 9섹션)</div>
-        <div class="output-item">핵심 메시지 + 채널 플랜</div>
-      </div>
-    </div>
 
-    <div class="team-card pgm">
-      <div class="team-header">
-        <div class="team-emoji">⚡</div>
-        <div>
-          <div class="team-name">PGM 커맨드센터</div>
-          <div class="team-name-en">PGM Command Center</div>
+      <div class="skill-category">
+        <div class="cat-header">
+          <div class="cat-dot" style="--cat-color: #3fb950;"></div>
+          <span class="cat-name">데이터 (Data)</span>
+        </div>
+        <div class="cat-skills">
+          <span class="skill-tag">/data</span>
+          <span class="skill-tag">/databricks</span>
+          <span class="skill-tag">/analyst</span>
+          <span class="skill-tag">/crm-analysis</span>
+          <span class="skill-tag">/chart</span>
         </div>
       </div>
-      <div class="team-desc">주간 운영의 핵심 허브. Flash Report + 회의록 + Jira 코멘트를 단 하나의 명령으로 통합 생성.</div>
-      <div class="skills-list">
-        <span class="skill-tag featured">/pgm --full</span>
-        <span class="skill-tag">/pgm</span>
-        <span class="skill-tag">/pgm --weekly</span>
-      </div>
-      <div class="outputs">
-        <div class="outputs-label">산출물 (full 모드 기준)</div>
-        <div class="output-item">Flash Report MD + Google Docs</div>
-        <div class="output-item">회의록 MD + Google Docs</div>
-        <div class="output-item">Slack 요약 + Gmail 초안</div>
-        <div class="output-item">Jira Initiative 코멘트 게시</div>
-      </div>
-    </div>
 
-    <div class="team-card discovery">
-      <div class="team-header">
-        <div class="team-emoji">🔍</div>
-        <div>
-          <div class="team-name">디스커버리팀</div>
-          <div class="team-name-en">Discovery Team</div>
+      <div class="skill-category">
+        <div class="cat-header">
+          <div class="cat-dot" style="--cat-color: #d2a8ff;"></div>
+          <span class="cat-name">리서치 (Research)</span>
+        </div>
+        <div class="cat-skills">
+          <span class="skill-tag">/discovery</span>
+          <span class="skill-tag">/market-research</span>
+          <span class="skill-tag">/figma</span>
+          <span class="skill-tag">/strategy</span>
         </div>
       </div>
-      <div class="team-desc">시장·사용자 리서치 자동화. 5단계 워크플로우로 경쟁사 분석, 페르소나, 가상 인터뷰까지 처리.</div>
-      <div class="skills-list">
-        <span class="skill-tag featured">/discovery</span>
-        <span class="skill-tag">--ref</span>
-        <span class="skill-tag">--mode web-analysis</span>
-      </div>
-      <div class="outputs">
-        <div class="outputs-label">산출물</div>
-        <div class="output-item">시장분석 (TAM/SAM/SOM)</div>
-        <div class="output-item">P0/P1 페르소나 JSON</div>
-        <div class="output-item">가상 사용자 인터뷰</div>
-        <div class="output-item">최종 Discovery 리포트</div>
-      </div>
-    </div>
 
-    <div class="team-card knowledge">
-      <div class="team-header">
-        <div class="team-emoji">📚</div>
-        <div>
-          <div class="team-name">지식팀</div>
-          <div class="team-name-en">Knowledge Team</div>
+      <div class="skill-category">
+        <div class="cat-header">
+          <div class="cat-dot" style="--cat-color: #ffa657;"></div>
+          <span class="cat-name">협업 (Collaboration)</span>
+        </div>
+        <div class="cat-skills">
+          <span class="skill-tag">/meeting</span>
+          <span class="skill-tag">/slack</span>
+          <span class="skill-tag">/jira</span>
+          <span class="skill-tag">/task-ticket</span>
+          <span class="skill-tag">/ticket-review</span>
+          <span class="skill-tag">/mail</span>
         </div>
       </div>
-      <div class="team-desc">Confluence/Notion 문서 검색·저장. 키워드 기반 스페이스 자동 라우팅으로 맥락 있는 지식 관리.</div>
-      <div class="skills-list">
-        <span class="skill-tag featured">confluence-reader</span>
-        <span class="skill-tag featured">confluence-writer</span>
-        <span class="skill-tag">notion-tool</span>
-      </div>
-      <div class="outputs">
-        <div class="outputs-label">산출물</div>
-        <div class="output-item">Confluence 검색 요약</div>
-        <div class="output-item">페이지 생성/수정 URL</div>
-      </div>
-    </div>
 
-    <div class="team-card comms">
-      <div class="team-header">
-        <div class="team-emoji">💬</div>
-        <div>
-          <div class="team-name">커뮤니케이션팀</div>
-          <div class="team-name-en">Communications Team</div>
+      <div class="skill-category">
+        <div class="cat-header">
+          <div class="cat-dot" style="--cat-color: #ff7b72;"></div>
+          <span class="cat-name">보고 (Reporting)</span>
+        </div>
+        <div class="cat-skills">
+          <span class="skill-tag">/pgm</span>
+          <span class="skill-tag">/report</span>
+          <span class="skill-tag">/weekly-updater</span>
+          <span class="skill-tag">/work-log</span>
         </div>
       </div>
-      <div class="team-desc">이메일 발송과 Jira 티켓 생성 자동화. Confluence 문서를 HTML 이메일로 변환하여 발송.</div>
-      <div class="skills-list">
-        <span class="skill-tag featured">/mail</span>
-        <span class="skill-tag featured">jira-creator</span>
-      </div>
-      <div class="outputs">
-        <div class="outputs-label">산출물</div>
-        <div class="output-item">Gmail 발송 + send_log.json</div>
-        <div class="output-item">Jira 티켓 URL 목록</div>
-      </div>
-    </div>
 
-    <div class="team-card meeting">
-      <div class="team-header">
-        <div class="team-emoji">📋</div>
-        <div>
-          <div class="team-name">회의팀</div>
-          <div class="team-name-en">Meeting Team</div>
+      <div class="skill-category">
+        <div class="cat-header">
+          <div class="cat-dot" style="--cat-color: #79c0ff;"></div>
+          <span class="cat-name">지식·캠페인 (Knowledge)</span>
+        </div>
+        <div class="cat-skills">
+          <span class="skill-tag">/kb</span>
+          <span class="skill-tag">/chronicle</span>
+          <span class="skill-tag">/archive</span>
+          <span class="skill-tag">/push-campaign</span>
+          <span class="skill-tag">/confluence-tool</span>
+          <span class="skill-tag">/notion-tool</span>
+          <span class="skill-tag">/gmail-tool</span>
         </div>
       </div>
-      <div class="team-desc">회의록 작성부터 Confluence 업로드, Google Calendar 등록까지 회의 전후 프로세스 완전 자동화.</div>
-      <div class="skills-list">
-        <span class="skill-tag featured">/meeting</span>
-        <span class="skill-tag">--calendar</span>
-      </div>
-      <div class="outputs">
-        <div class="outputs-label">산출물</div>
-        <div class="output-item">회의록 MD + Confluence 페이지</div>
-        <div class="output-item">Google Calendar 이벤트 (옵션)</div>
-      </div>
-    </div>
 
-    <div class="team-card review">
-      <div class="team-header">
-        <div class="team-emoji">📊</div>
-        <div>
-          <div class="team-name">회고팀</div>
-          <div class="team-name-en">Review Team</div>
-        </div>
-      </div>
-      <div class="team-desc">Claude 대화 로그와 Jira/Confluence 활동을 분석해 주간 작업 리플렉션을 자동 생성.</div>
-      <div class="skills-list">
-        <span class="skill-tag featured">/work-log</span>
-        <span class="skill-tag">/report</span>
-        <span class="skill-tag">/ticket-review</span>
-      </div>
-      <div class="outputs">
-        <div class="outputs-label">산출물</div>
-        <div class="output-item">주간 작업 로그 MD</div>
-        <div class="output-item">C레벨 보고서 품질 검토</div>
-      </div>
-    </div>
-
-    <div class="team-card data">
-      <div class="team-header">
-        <div class="team-emoji">🗄️</div>
-        <div>
-          <div class="team-name">데이터팀</div>
-          <div class="team-name-en">Data Team · Databricks</div>
-        </div>
-      </div>
-      <div class="team-desc">Databricks Unity Catalog 탐색, 자연어 → SQL 변환 실행, PM 관점 인사이트 분석 리포트 생성.</div>
-      <div class="skills-list">
-        <span class="skill-tag featured">/databricks</span>
-        <span class="skill-tag">--explore</span>
-        <span class="skill-tag">--query</span>
-        <span class="skill-tag">--analyze</span>
-      </div>
-      <div class="outputs">
-        <div class="outputs-label">산출물</div>
-        <div class="output-item">Unity Catalog 구조 리포트</div>
-        <div class="output-item">쿼리 결과 + SQL 미리보기</div>
-        <div class="output-item">데이터 분석 인사이트 리포트</div>
-      </div>
-    </div>
-
-    <div class="team-card collab">
-      <div class="team-header">
-        <div class="team-emoji">💬</div>
-        <div>
-          <div class="team-name">협업팀</div>
-          <div class="team-name-en">Collaboration Team · Slack</div>
-        </div>
-      </div>
-      <div class="team-desc">Slack 채널 대화를 수집·요약하고 결정사항·Action Item을 자동 추출. 오늘/이번 주 단위 조회.</div>
-      <div class="skills-list">
-        <span class="skill-tag featured">/slack</span>
-        <span class="skill-tag">--today</span>
-        <span class="skill-tag">--week</span>
-        <span class="skill-tag">--search</span>
-      </div>
-      <div class="outputs">
-        <div class="outputs-label">산출물</div>
-        <div class="output-item">대화 요약 (결정사항 + Action Item)</div>
-        <div class="output-item">키워드 검색 결과</div>
-      </div>
-    </div>
-
-    <div class="team-card design">
-      <div class="team-header">
-        <div class="team-emoji">🎨</div>
-        <div>
-          <div class="team-name">디자인팀</div>
-          <div class="team-name-en">Design Team · Figma</div>
-        </div>
-      </div>
-      <div class="team-desc">Figma 파일 분석으로 화면 설계서·PRD 초안 자동 생성. Before/After 비교, UX 카피 추출까지.</div>
-      <div class="skills-list">
-        <span class="skill-tag featured">/figma</span>
-        <span class="skill-tag">--spec</span>
-        <span class="skill-tag">--prd</span>
-        <span class="skill-tag">--compare</span>
-        <span class="skill-tag">--copy</span>
-      </div>
-      <div class="outputs">
-        <div class="outputs-label">산출물</div>
-        <div class="output-item">화면 구조 분석 리포트</div>
-        <div class="output-item">화면 설계서 (개발팀 전달용)</div>
-        <div class="output-item">PRD 초안 (기획팀 연계)</div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- PGM PIPELINE -->
-<section class="fade-in">
-  <div class="section-label">Deep Dive</div>
-  <h2>PGM 파이프라인</h2>
-  <p class="section-desc">6단계 체크포인트 파이프라인. 중단되어도 동일 날짜 재실행 시 완료 단계를 자동 스킵합니다.</p>
-
-  <div class="pipeline-container">
-    <div class="pipeline-title">PGM Command Center — Full Mode</div>
-    <div class="pipeline-cmd">/pgm --full MATCH {CONFLUENCE_URL}</div>
-
-    <div class="pipeline-steps">
-      <div class="pipeline-step">
-        <div class="step-num">0</div>
-        <div class="step-name">체크포인트 확인</div>
-        <div class="step-artifacts">
-          <span>.pipeline_state.json</span>
-          <span>완료 단계 스킵</span>
-        </div>
-      </div>
-      <div class="pipeline-step">
-        <div class="step-num">1</div>
-        <div class="step-name">데이터 수집 (병렬)</div>
-        <div class="step-artifacts">
-          <span>jira_raw.json</span>
-          <span>confluence.md</span>
-        </div>
-      </div>
-      <div class="pipeline-step">
-        <div class="step-num">2</div>
-        <div class="step-name">Analyst</div>
-        <div class="step-artifacts">
-          <span>WoW 트렌드</span>
-          <span>analysed_report.json</span>
-        </div>
-      </div>
-      <div class="pipeline-step">
-        <div class="step-num">3</div>
-        <div class="step-name">발행 (병렬)</div>
-        <div class="step-artifacts">
-          <span>flash.md</span>
-          <span>minutes.md</span>
-          <span>slack_summary.txt</span>
-        </div>
-      </div>
-      <div class="pipeline-step">
-        <div class="step-num">4</div>
-        <div class="step-name">Weekly Poster</div>
-        <div class="step-artifacts">
-          <span>Jira 코멘트 게시</span>
-          <span>weekly_result.json</span>
-        </div>
-      </div>
-      <div class="pipeline-step">
-        <div class="step-num">5</div>
-        <div class="step-name">검증 & 레지스트리</div>
-        <div class="step-artifacts">
-          <span>_artifacts.json</span>
-          <span>자기 검증</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="pipeline-outputs">
-      <div class="output-card">
-        <div class="output-card-icon">📄</div>
-        <div class="output-card-title">Flash Report</div>
-        <div class="output-card-desc">MD 파일 + Google Docs 링크 + Gmail 초안 자동 저장</div>
-      </div>
-      <div class="output-card">
-        <div class="output-card-icon">📝</div>
-        <div class="output-card-title">회의록</div>
-        <div class="output-card-desc">Confluence 원문 파싱 → 구조화된 회의록 + Slack 요약</div>
-      </div>
-      <div class="output-card">
-        <div class="output-card-icon">🎯</div>
-        <div class="output-card-title">Jira 코멘트</div>
-        <div class="output-card-desc">Initiative 키 자동 감지 → ADF 포맷으로 코멘트 게시</div>
-      </div>
-    </div>
-
-    <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
-      <div style="font-size: 12px; color: var(--text3); margin-bottom: 10px;">프로젝트 헬스 상태 표시</div>
-      <div class="status-grid">
-        <div class="status-indicator">
-          <span class="status-dot green"></span>
-          <span style="font-size: 13px;">정상 — 일정 준수</span>
-        </div>
-        <div class="status-indicator">
-          <span class="status-dot yellow"></span>
-          <span style="font-size: 13px;">주의 — 일정 리스크</span>
-        </div>
-        <div class="status-indicator">
-          <span class="status-dot red"></span>
-          <span style="font-size: 13px;">위험 — 즉각 결정 필요</span>
-        </div>
-      </div>
     </div>
   </div>
-</section>
 
-<div class="divider"></div>
+  <!-- Two Column: Top Skills + Agent Systems -->
+  <div class="two-col">
 
-<!-- WORKFLOWS -->
-<section class="fade-in">
-  <div class="section-label">Workflow Patterns</div>
-  <h2>복합 워크플로우</h2>
-  <p class="section-desc">자주 반복되는 작업 패턴을 하나의 명령 체인으로 실행합니다.</p>
-
-  <div class="workflows-grid">
-
-    <div class="workflow-card pattern-a fade-in">
-      <div>
-        <div class="workflow-label">Pattern A</div>
-        <div class="workflow-title">기획 파이프라인</div>
-        <div class="workflow-desc">아이디어 → Jira 티켓까지 완전 자동화</div>
+    <!-- Top Skills Usage -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">📊</span>
+        <span class="section-title">스킬 사용 빈도</span>
+        <span class="section-count">완료 세션 438건</span>
       </div>
-      <div class="workflow-steps">
-        <div class="wf-step">
-          <span class="wf-cmd">/discovery {topic}</span>
-          <span class="wf-desc">시장 분석 + 페르소나</span>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <span class="bar-label">/staff</span>
+          <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
+          <span class="bar-count">338</span>
         </div>
-        <div class="wf-arrow">↓</div>
-        <div class="wf-step">
-          <span class="wf-cmd">/prd TM-XXXX</span>
-          <span class="wf-desc">PRD 9섹션 자동 생성</span>
+        <div class="bar-row">
+          <span class="bar-label">confluence-reader</span>
+          <div class="bar-track"><div class="bar-fill" style="width:17%; background: linear-gradient(90deg, #3fb950, #79c0ff);"></div></div>
+          <span class="bar-count">58</span>
         </div>
-        <div class="wf-arrow">↓</div>
-        <div class="wf-step">
-          <span class="wf-cmd">/red {PRD file}</span>
-          <span class="wf-desc">가정 검증 + 반론 질문</span>
+        <div class="bar-row">
+          <span class="bar-label">/prd</span>
+          <div class="bar-track"><div class="bar-fill" style="width:9%; background: linear-gradient(90deg, #d2a8ff, #58a6ff);"></div></div>
+          <span class="bar-count">30</span>
         </div>
-        <div class="wf-arrow">↓</div>
-        <div class="wf-step">
-          <span class="wf-cmd">/epic {PRD} TM-XXXX</span>
-          <span class="wf-desc">Jira Epic 티켓 자동 등록</span>
+        <div class="bar-row">
+          <span class="bar-label">/two-pager</span>
+          <div class="bar-track"><div class="bar-fill" style="width:5%; background: linear-gradient(90deg, #ffa657, #ff7b72);"></div></div>
+          <span class="bar-count">16</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">/push-campaign</span>
+          <div class="bar-track"><div class="bar-fill" style="width:4%; background: linear-gradient(90deg, #ff7b72, #ffa657);"></div></div>
+          <span class="bar-count">14</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">confluence-writer</span>
+          <div class="bar-track"><div class="bar-fill" style="width:4%; background: linear-gradient(90deg, #3fb950, #d2a8ff);"></div></div>
+          <span class="bar-count">13</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">/databricks</span>
+          <div class="bar-track"><div class="bar-fill" style="width:3%; background: linear-gradient(90deg, #79c0ff, #3fb950);"></div></div>
+          <span class="bar-count">11</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">/red</span>
+          <div class="bar-track"><div class="bar-fill" style="width:3%; background: linear-gradient(90deg, #ff7b72, #d2a8ff);"></div></div>
+          <span class="bar-count">10</span>
         </div>
       </div>
     </div>
 
-    <div class="workflow-card pattern-b fade-in">
-      <div>
-        <div class="workflow-label">Pattern B</div>
-        <div class="workflow-title">주간 성과 보고</div>
-        <div class="workflow-desc">Flash + 회의록 + 이메일 배포 통합</div>
+    <!-- Agent Systems -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🤖</span>
+        <span class="section-title">에이전트 시스템</span>
+        <span class="section-count">11개</span>
       </div>
-      <div class="workflow-steps">
-        <div class="wf-step">
-          <span class="wf-cmd">/pgm --full MATCH {URL}</span>
-          <span class="wf-desc">Flash + 회의록 + Jira 코멘트</span>
+      <div class="agents-grid" style="grid-template-columns: 1fr;">
+        <div class="agent-card">
+          <div class="agent-name">prd-agent-system</div>
+          <div class="agent-desc">기능 PRD 작성, Red Team 검증, 가정 검증</div>
+          <div class="agent-meta"><span class="agent-tag">/prd</span><span class="agent-tag">/red</span></div>
         </div>
-        <div class="wf-arrow">↓</div>
-        <div class="wf-step">
-          <span class="wf-cmd">/report {flash.md}</span>
-          <span class="wf-desc">C레벨 보고서 품질 검토</span>
+        <div class="agent-card">
+          <div class="agent-name">data-agent-system</div>
+          <div class="agent-desc">조회→분석→시각화 3레이어 통합 데이터 에이전트</div>
+          <div class="agent-meta"><span class="agent-tag">/data</span><span class="agent-tag">Amplitude</span><span class="agent-tag">Databricks</span></div>
         </div>
-        <div class="wf-arrow">↓</div>
-        <div class="wf-step">
-          <span class="wf-cmd">/mail {flash.md} --to {팀}</span>
-          <span class="wf-desc">HTML 이메일 자동 배포</span>
+        <div class="agent-card">
+          <div class="agent-name">crm-analysis-agent-system</div>
+          <div class="agent-desc">CRM 전광판 지표 조회·트렌드·발송압력 분석</div>
+          <div class="agent-meta"><span class="agent-tag">/crm-analysis</span><span class="agent-tag">Databricks</span></div>
         </div>
-      </div>
-    </div>
-
-    <div class="workflow-card pattern-c fade-in">
-      <div>
-        <div class="workflow-label">Pattern C</div>
-        <div class="workflow-title">런치 파이프라인</div>
-        <div class="workflow-desc">Discovery → GTM → Confluence 게시</div>
-      </div>
-      <div class="workflow-steps">
-        <div class="wf-step">
-          <span class="wf-cmd">/discovery {topic}</span>
-          <span class="wf-desc">시장 분석 리포트</span>
+        <div class="agent-card">
+          <div class="agent-name">discovery-intelligence-system</div>
+          <div class="agent-desc">시장·경쟁·사용자 리서치, 화면 분석</div>
+          <div class="agent-meta"><span class="agent-tag">/discovery</span><span class="agent-tag">/market-research</span></div>
         </div>
-        <div class="wf-arrow">↓</div>
-        <div class="wf-step">
-          <span class="wf-cmd">/prd [rough notes]</span>
-          <span class="wf-desc">PRD 문서 생성</span>
-        </div>
-        <div class="wf-arrow">↓</div>
-        <div class="wf-step">
-          <span class="wf-cmd">/gtm {PRD file}</span>
-          <span class="wf-desc">GTM Brief 자동 생성</span>
-        </div>
-        <div class="wf-arrow">↓</div>
-        <div class="wf-step">
-          <span class="wf-cmd">confluence-writer</span>
-          <span class="wf-desc">Confluence 자동 게시</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="workflow-card pattern-d fade-in">
-      <div>
-        <div class="workflow-label">Pattern D</div>
-        <div class="workflow-title">과제 정리</div>
-        <div class="workflow-desc">CSV/JQL → 클러스터링 → Jira 등록</div>
-      </div>
-      <div class="workflow-steps">
-        <div class="wf-step">
-          <span class="wf-cmd">/ticket-review [CSV/JQL]</span>
-          <span class="wf-desc">MATCH팀 분류 + 유사도 클러스터링</span>
-        </div>
-        <div class="wf-arrow">↓</div>
-        <div class="wf-step">
-          <span class="wf-cmd">/epic {clusters}</span>
-          <span class="wf-desc">Jira Epic 자동 등록</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="workflow-card pattern-a fade-in">
-      <div>
-        <div class="workflow-label">Pattern H · New</div>
-        <div class="workflow-title">데이터 → 기획</div>
-        <div class="workflow-desc">Databricks 분석 결과 → PRD 자동 연결</div>
-      </div>
-      <div class="workflow-steps">
-        <div class="wf-step">
-          <span class="wf-cmd">/databricks --analyze {table}</span>
-          <span class="wf-desc">KPI 데이터 분석 + 인사이트</span>
-        </div>
-        <div class="wf-arrow">↓</div>
-        <div class="wf-step">
-          <span class="wf-cmd">/prd TM-XXXX</span>
-          <span class="wf-desc">분석 결과 → PRD Rough Note로 활용</span>
-        </div>
-        <div class="wf-arrow">↓</div>
-        <div class="wf-step">
-          <span class="wf-cmd">/red {PRD}</span>
-          <span class="wf-desc">가정 검증</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="workflow-card pattern-b fade-in">
-      <div>
-        <div class="workflow-label">Pattern I · New</div>
-        <div class="workflow-title">Slack → 회의록</div>
-        <div class="workflow-desc">채널 대화 수집 → 회의록 자동 생성</div>
-      </div>
-      <div class="workflow-steps">
-        <div class="wf-step">
-          <span class="wf-cmd">/slack --today #match-pm</span>
-          <span class="wf-desc">오늘 대화 수집 + Action Item 추출</span>
-        </div>
-        <div class="wf-arrow">↓</div>
-        <div class="wf-step">
-          <span class="wf-cmd">/meeting --input {slack.md}</span>
-          <span class="wf-desc">회의록 작성 + Confluence 업로드</span>
-        </div>
-        <div class="wf-arrow">↓</div>
-        <div class="wf-step">
-          <span class="wf-cmd">/pgm --weekly {Confluence URL}</span>
-          <span class="wf-desc">Jira Initiative 코멘트 자동 게시</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="workflow-card pattern-c fade-in">
-      <div>
-        <div class="workflow-label">Pattern J · New</div>
-        <div class="workflow-title">Figma → 기획</div>
-        <div class="workflow-desc">화면 분석 → 설계서 + PRD 자동 생성</div>
-      </div>
-      <div class="workflow-steps">
-        <div class="wf-step">
-          <span class="wf-cmd">/figma [URL]</span>
-          <span class="wf-desc">화면 구조 파악</span>
-        </div>
-        <div class="wf-arrow">↓</div>
-        <div class="wf-step">
-          <span class="wf-cmd">/figma [URL] --spec</span>
-          <span class="wf-desc">개발팀 전달용 설계서 → Confluence</span>
-        </div>
-        <div class="wf-arrow">↓</div>
-        <div class="wf-step">
-          <span class="wf-cmd">/figma [URL] --prd</span>
-          <span class="wf-desc">PRD 초안 자동 생성 → /red → /epic</span>
+        <div class="agent-card">
+          <div class="agent-name">two-pager / figma / pgm / report</div>
+          <div class="agent-desc">경영진 의사결정 문서, Figma 분석, 주간보고, C레벨 검토</div>
+          <div class="agent-meta"><span class="agent-tag">/two-pager</span><span class="agent-tag">/figma</span><span class="agent-tag">/pgm</span></div>
         </div>
       </div>
     </div>
 
   </div>
-</section>
 
-<div class="divider"></div>
-
-<!-- COMMANDS -->
-<section class="fade-in">
-  <div class="section-label">Command Reference</div>
-  <h2>전체 명령어</h2>
-  <p class="section-desc">23개 명령으로 PM 업무 전 사이클을 커버합니다.</p>
-
-  <div class="commands-section">
-    <div class="commands-header">
-      <h3>Commands & Agents</h3>
-      <span class="cmd-count">23개</span>
+  <!-- Recent Outputs -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📁</span>
+      <span class="section-title">최근 산출물</span>
     </div>
-    <table class="commands-table">
-      <thead>
-        <tr>
-          <th>명령어</th>
-          <th>설명</th>
-          <th>팀</th>
-          <th>주요 산출물</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><span class="cmd-name">/prd</span></td>
-          <td>PRD 9섹션 자동 생성 (경쟁사 분석 포함)</td>
-          <td><span class="cmd-team-badge badge-planning">📐 기획</span></td>
-          <td><span class="cmd-output-tag">prd_{date}_{topic}.md</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/red</span></td>
-          <td>PRD 가정 검증 및 Red Team 질문 생성</td>
-          <td><span class="cmd-team-badge badge-planning">📐 기획</span></td>
-          <td><span class="cmd-output-tag">redteam_{date}.md</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">qa-agent</span></td>
-          <td>PRD → QA 테스트케이스 + PM 킥오프 브리핑 자동 생성</td>
-          <td><span class="cmd-team-badge badge-planning">📐 기획</span></td>
-          <td><span class="cmd-output-tag">qa_testcase / qa_briefing.md</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/epic</span></td>
-          <td>PRD → Epic 분해 + Jira 티켓 자동 등록</td>
-          <td><span class="cmd-team-badge badge-planning">📐 기획</span></td>
-          <td><span class="cmd-output-tag">Jira URLs</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/gtm</span></td>
-          <td>PRD 기반 GTM Brief 생성 (내부/외부 자동 감지)</td>
-          <td><span class="cmd-team-badge badge-marketing">📣 마케팅</span></td>
-          <td><span class="cmd-output-tag">GTM_Brief_{date}.md</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/pgm</span></td>
-          <td>Flash Report 생성 (Jira 데이터 기반)</td>
-          <td><span class="cmd-team-badge badge-pgm">⚡ PGM</span></td>
-          <td><span class="cmd-output-tag">flash_{date}.md</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/pgm --weekly</span></td>
-          <td>Confluence 회의록 → Jira Initiative 코멘트</td>
-          <td><span class="cmd-team-badge badge-pgm">⚡ PGM</span></td>
-          <td><span class="cmd-output-tag">weekly_draft.json</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/pgm --full</span></td>
-          <td>Flash + 회의록 + Jira 코멘트 통합 실행</td>
-          <td><span class="cmd-team-badge badge-pgm">⚡ PGM</span></td>
-          <td><span class="cmd-output-tag">6개 산출물</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/discovery</span></td>
-          <td>시장/사용자 리서치 (5단계 자동 분석)</td>
-          <td><span class="cmd-team-badge badge-discovery">🔍 디스커버리</span></td>
-          <td><span class="cmd-output-tag">DISCOVERY-REPORT.md</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/mail</span></td>
-          <td>Confluence 문서 → HTML 이메일 발송</td>
-          <td><span class="cmd-team-badge badge-comms">💬 커뮤니케이션</span></td>
-          <td><span class="cmd-output-tag">send_log.json</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/meeting</span></td>
-          <td>회의록 작성 + Confluence 업로드</td>
-          <td><span class="cmd-team-badge badge-meeting">📋 회의</span></td>
-          <td><span class="cmd-output-tag">Confluence URL</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/report</span></td>
-          <td>C레벨 보고서 품질 검토 (승인/조건/반려)</td>
-          <td><span class="cmd-team-badge badge-review">📊 회고</span></td>
-          <td><span class="cmd-output-tag">report_review.md</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/ticket-review</span></td>
-          <td>CSV/JQL 과제 클러스터링 및 분류</td>
-          <td><span class="cmd-team-badge badge-review">📊 회고</span></td>
-          <td><span class="cmd-output-tag">ticket_review.md</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/work-log</span></td>
-          <td>주간 작업 자동 리플렉션</td>
-          <td><span class="cmd-team-badge badge-review">📊 회고</span></td>
-          <td><span class="cmd-output-tag">work_log_{date}.md</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/databricks</span></td>
-          <td>Unity Catalog 탐색 (args 없음)</td>
-          <td><span class="cmd-team-badge badge-data">🗄️ 데이터</span></td>
-          <td><span class="cmd-output-tag">explore_{date}.md</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/databricks --query</span></td>
-          <td>자연어 또는 SQL → 쿼리 실행 + 결과 요약</td>
-          <td><span class="cmd-team-badge badge-data">🗄️ 데이터</span></td>
-          <td><span class="cmd-output-tag">query_{date}.md</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/databricks --analyze</span></td>
-          <td>테이블 분석 + PM 관점 인사이트 리포트</td>
-          <td><span class="cmd-team-badge badge-data">🗄️ 데이터</span></td>
-          <td><span class="cmd-output-tag">analyze_{date}.md</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/slack --today</span></td>
-          <td>오늘 채널 대화 수집 + 결정사항·Action Item 요약</td>
-          <td><span class="cmd-team-badge badge-collab">💬 협업</span></td>
-          <td><span class="cmd-output-tag">slack_{date}_today.md</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/slack --week</span></td>
-          <td>이번 주 채널 대화 전체 요약</td>
-          <td><span class="cmd-team-badge badge-collab">💬 협업</span></td>
-          <td><span class="cmd-output-tag">slack_{date}_week.md</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/figma [URL]</span></td>
-          <td>Figma 파일/프레임 화면 구조 분석</td>
-          <td><span class="cmd-team-badge badge-design">🎨 디자인</span></td>
-          <td><span class="cmd-output-tag">figma_analyze_{date}.md</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/figma --spec</span></td>
-          <td>화면 설계서 (개발팀 전달용 스펙 문서)</td>
-          <td><span class="cmd-team-badge badge-design">🎨 디자인</span></td>
-          <td><span class="cmd-output-tag">figma_spec_{date}.md</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/figma --prd</span></td>
-          <td>Figma 화면 → PRD 초안 자동 생성 (기획팀 연계)</td>
-          <td><span class="cmd-team-badge badge-design">🎨 디자인</span></td>
-          <td><span class="cmd-output-tag">prd_{date}.md</span></td>
-        </tr>
-        <tr>
-          <td><span class="cmd-name">/archive</span></td>
-          <td>30일 이상 오래된 결과물을 output/_archive/ 로 자동 정리</td>
-          <td><span class="cmd-team-badge" style="background:rgba(16,185,129,0.12);color:#10b981;border:1px solid rgba(16,185,129,0.25);">🗂 관리</span></td>
-          <td><span class="cmd-output-tag">output/_archive/{YYYY-MM}/</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- PRINCIPLES -->
-<section class="fade-in">
-  <div class="section-label">Design Principles</div>
-  <h2>운영 철학</h2>
-  <p class="section-desc">PM Studio는 다섯 가지 원칙 위에 설계되었습니다.</p>
-
-  <div class="principles-grid">
-    <div class="principle-card">
-      <div class="principle-icon">✍️</div>
-      <div class="principle-title">Prompt-First Thinking</div>
-      <div class="principle-desc">빈 문서가 아닌 에이전트 요청으로 시작. 구조는 AI가, 판단은 PM이.</div>
-    </div>
-    <div class="principle-card">
-      <div class="principle-icon">⚡</div>
-      <div class="principle-title">Draft Fast, Judge Slow</div>
-      <div class="principle-desc">AI가 빠르게 초안을 만들고, PM이 깊이 검토한다. 속도와 품질을 분리.</div>
-    </div>
-    <div class="principle-card">
-      <div class="principle-icon">🏗️</div>
-      <div class="principle-title">Context as Assets</div>
-      <div class="principle-desc">지식이 구조화된 파일로 축적. context.md, decisions.md, references.json이 다음 작업의 기반.</div>
-    </div>
-    <div class="principle-card">
-      <div class="principle-icon">🤝</div>
-      <div class="principle-title">Agents as Teammates</div>
-      <div class="principle-desc">각 에이전트는 명확한 역할, 산출물, 품질 기준을 가진 팀원.</div>
-    </div>
-    <div class="principle-card">
-      <div class="principle-icon">🧭</div>
-      <div class="principle-title">Human-in-the-Loop</div>
-      <div class="principle-desc">전략, 고객 인사이트, 이해관계자 관리는 PM의 영역. AI는 실행을 지원.</div>
+    <div class="output-list">
+      <div class="output-item">
+        <span class="output-type type-prd">PRD</span>
+        <span class="output-name">Inbox Optimizer Phase 2 — PRD v2 (prd_20260430_inbox-optimizer-phase2_v2.md)</span>
+        <span class="output-date">2026-04-30</span>
+      </div>
+      <div class="output-item">
+        <span class="output-type type-prd">PRD</span>
+        <span class="output-name">Lookalike Audience (LAA) Phase 1 — PRD v2 (prd_20260430_LAA_Phase1_v2.md)</span>
+        <span class="output-date">2026-04-30</span>
+      </div>
+      <div class="output-item">
+        <span class="output-type type-2pager">2-Pager</span>
+        <span class="output-name">Inbox Optimizer 경영진 의사결정 문서 v2 (2pager_inbox_optimizer_v2_20260430.md)</span>
+        <span class="output-date">2026-04-30</span>
+      </div>
+      <div class="output-item">
+        <span class="output-type type-skill">Skill</span>
+        <span class="output-name">통합 데이터 에이전트 신설 — data-agent-system + /data 스킬</span>
+        <span class="output-date">2026-04-30</span>
+      </div>
+      <div class="output-item">
+        <span class="output-type type-skill">Skill</span>
+        <span class="output-name">/chart 독립 스킬 신설 — Chart.js HTML 시각화</span>
+        <span class="output-date">2026-04-30</span>
+      </div>
+      <div class="output-item">
+        <span class="output-type type-analysis">Analysis</span>
+        <span class="output-name">29CM 캠페인메타엔진 hash_id 연동 이슈 분석 마크다운</span>
+        <span class="output-date">2026-04-30</span>
+      </div>
+      <div class="output-item">
+        <span class="output-type type-doc">Doc</span>
+        <span class="output-name">MATCH Overview Rewrite — 전체 구조 재정리 (MATCH_Overview_rewrite_20260415.md)</span>
+        <span class="output-date">2026-04-15</span>
+      </div>
+      <div class="output-item">
+        <span class="output-type type-analysis">Analysis</span>
+        <span class="output-name">Figma 화면 → Campaign Meta Engine 설계 분리 전략 분석</span>
+        <span class="output-date">2026-04-18</span>
+      </div>
     </div>
   </div>
-</section>
 
-<!-- SESSION LOG -->
-<div class="divider"></div>
-
-<section class="fade-in">
-  <div class="section-label">Observability</div>
-  <h2>세션 로그 자동 기록</h2>
-  <p class="section-desc">/staff 호출마다 스킬 사용, 산출물 유형, 소요 시간, API 비용이 <code>output/logs/staff_sessions.jsonl</code>에 자동 누적됩니다.</p>
-
-  <div class="log-schema">
-<span class="key">{</span><br>
-&nbsp;&nbsp;<span class="key">"id"</span>:            <span class="val">"20260409_090501"</span>,<br>
-&nbsp;&nbsp;<span class="key">"start_ts"</span>:      <span class="val">"2026-04-09T09:05:01+09:00"</span>,<br>
-&nbsp;&nbsp;<span class="key">"request"</span>:       <span class="val">"Audience API PRD 작성"</span>,<br>
-&nbsp;&nbsp;<span class="key">"skills"</span>:        <span class="val">["/staff", "confluence-reader", "/prd", "/red"]</span>,<br>
-&nbsp;&nbsp;<span class="key">"outputs"</span>:       <span class="val">["prd_20260409_audience_api.md"]</span>,<br>
-&nbsp;&nbsp;<span class="highlight">"output_types"</span>: <span class="val">["prd", "confluence-edit"]</span>,  <span class="comment">// ← 산출물 유형 분류</span><br>
-&nbsp;&nbsp;<span class="key">"status"</span>:        <span class="val">"completed"</span>,<br>
-&nbsp;&nbsp;<span class="key">"model"</span>:         <span class="val">"claude-sonnet-4-6"</span>,<br>
-&nbsp;&nbsp;<span class="key">"cost_usd"</span>:      <span class="val">0.1182</span>,<br>
-&nbsp;&nbsp;<span class="key">"duration_sec"</span>: <span class="val">821</span><br>
-<span class="key">}</span>
+  <!-- Input Structure -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📂</span>
+      <span class="section-title">디렉터리 구조</span>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-category">
+        <div class="cat-header">
+          <div class="cat-dot" style="--cat-color: #79c0ff;"></div>
+          <span class="cat-name">input/</span>
+        </div>
+        <div class="cat-skills">
+          <span class="skill-tag">initiatives/</span>
+          <span class="skill-tag">meetings/</span>
+          <span class="skill-tag">kb/</span>
+          <span class="skill-tag">data/</span>
+          <span class="skill-tag">notes/</span>
+          <span class="skill-tag">plans/</span>
+          <span class="skill-tag">refs/</span>
+        </div>
+      </div>
+      <div class="skill-category">
+        <div class="cat-header">
+          <div class="cat-dot" style="--cat-color: #3fb950;"></div>
+          <span class="cat-name">output/</span>
+        </div>
+        <div class="cat-skills">
+          <span class="skill-tag">artifacts/</span>
+          <span class="skill-tag">braze_campaigns/</span>
+          <span class="skill-tag">braze_events/</span>
+          <span class="skill-tag">reports/</span>
+          <span class="skill-tag">logs/</span>
+        </div>
+      </div>
+      <div class="skill-category">
+        <div class="cat-header">
+          <div class="cat-dot" style="--cat-color: #d2a8ff;"></div>
+          <span class="cat-name">.claude/skills/ (스킬 정의)</span>
+        </div>
+        <div class="cat-skills">
+          <span class="skill-tag">staff/</span>
+          <span class="skill-tag">prd/</span>
+          <span class="skill-tag">data/</span>
+          <span class="skill-tag">chart/</span>
+          <span class="skill-tag">chronicle/</span>
+          <span class="skill-tag">+28개</span>
+        </div>
+      </div>
+      <div class="skill-category">
+        <div class="cat-header">
+          <div class="cat-dot" style="--cat-color: #ffa657;"></div>
+          <span class="cat-name">에이전트 시스템 폴더</span>
+        </div>
+        <div class="cat-skills">
+          <span class="skill-tag">prd-agent-system/</span>
+          <span class="skill-tag">data-agent-system/</span>
+          <span class="skill-tag">discovery-intelligence-system/</span>
+          <span class="skill-tag">figma-agent-system/</span>
+          <span class="skill-tag">+7개</span>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="output-types-grid">
-    <div class="output-type-card">
-      <div class="output-type-key">prd</div>
-      <div class="output-type-desc">PRD 신규 작성</div>
+  <!-- MCP Integrations -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🔌</span>
+      <span class="section-title">MCP 연동 현황</span>
     </div>
-    <div class="output-type-card">
-      <div class="output-type-key">prd-edit</div>
-      <div class="output-type-desc">PRD 수정·보완</div>
-    </div>
-    <div class="output-type-card">
-      <div class="output-type-key">2-pager</div>
-      <div class="output-type-desc">2-Pager 의사결정 문서</div>
-    </div>
-    <div class="output-type-card">
-      <div class="output-type-key">confluence-page</div>
-      <div class="output-type-desc">Confluence 페이지 신규</div>
-    </div>
-    <div class="output-type-card">
-      <div class="output-type-key">confluence-edit</div>
-      <div class="output-type-desc">Confluence 페이지 수정</div>
-    </div>
-    <div class="output-type-card">
-      <div class="output-type-key">jira-ticket</div>
-      <div class="output-type-desc">Jira 티켓 생성</div>
-    </div>
-    <div class="output-type-card">
-      <div class="output-type-key">diagram</div>
-      <div class="output-type-desc">Mermaid 등 다이어그램</div>
-    </div>
-    <div class="output-type-card">
-      <div class="output-type-key">meeting-notes</div>
-      <div class="output-type-desc">회의록</div>
-    </div>
-    <div class="output-type-card">
-      <div class="output-type-key">analysis</div>
-      <div class="output-type-desc">분석 보고서 / 인사이트</div>
-    </div>
-    <div class="output-type-card">
-      <div class="output-type-key">strategy</div>
-      <div class="output-type-desc">전략 문서 / 자문</div>
-    </div>
-    <div class="output-type-card">
-      <div class="output-type-key">script</div>
-      <div class="output-type-desc">Python / 코드 스크립트</div>
-    </div>
-    <div class="output-type-card">
-      <div class="output-type-key">agent-skill</div>
-      <div class="output-type-desc">에이전트 / 스킬 설계·수정</div>
+    <div class="skills-grid">
+      <div class="skill-category">
+        <div class="cat-header">
+          <div class="cat-dot" style="--cat-color: #58a6ff;"></div>
+          <span class="cat-name">Atlassian (Confluence · Jira)</span>
+        </div>
+        <div class="cat-skills">
+          <span class="skill-tag">페이지 조회/생성/수정</span>
+          <span class="skill-tag">이슈 생성/수정</span>
+          <span class="skill-tag">JQL 검색</span>
+          <span class="skill-tag">스페이스 탐색</span>
+        </div>
+      </div>
+      <div class="skill-category">
+        <div class="cat-header">
+          <div class="cat-dot" style="--cat-color: #3fb950;"></div>
+          <span class="cat-name">Databricks</span>
+        </div>
+        <div class="cat-skills">
+          <span class="skill-tag">SQL 쿼리 실행</span>
+          <span class="skill-tag">테이블 스키마 탐색</span>
+          <span class="skill-tag">CRM 지표 조회</span>
+        </div>
+      </div>
+      <div class="skill-category">
+        <div class="cat-header">
+          <div class="cat-dot" style="--cat-color: #ffa657;"></div>
+          <span class="cat-name">Amplitude</span>
+        </div>
+        <div class="cat-skills">
+          <span class="skill-tag">차트 조회</span>
+          <span class="skill-tag">이벤트 분석</span>
+          <span class="skill-tag">코호트</span>
+          <span class="skill-tag">퍼널</span>
+        </div>
+      </div>
+      <div class="skill-category">
+        <div class="cat-header">
+          <div class="cat-dot" style="--cat-color: #d2a8ff;"></div>
+          <span class="cat-name">기타</span>
+        </div>
+        <div class="cat-skills">
+          <span class="skill-tag">Slack 조회/발송</span>
+          <span class="skill-tag">Gmail</span>
+          <span class="skill-tag">Google Calendar</span>
+          <span class="skill-tag">Figma</span>
+          <span class="skill-tag">Notion</span>
+        </div>
+      </div>
     </div>
   </div>
-</section>
 
-<footer>
-  <strong>PM Studio</strong> — AI-Native PM Operating System for Musinsa<br>
-  <span style="margin-top: 6px; display: block;">Built with Claude Sonnet 4.6 · 2026 Q2 · 11 Teams · 7 Initiatives · Databricks · Slack · Figma · Session Logging</span>
-</footer>
+</div>
 
-<script>
-  // Fade in on scroll
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('visible');
-        }
-      });
-    },
-    { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
-  );
+<!-- Footer -->
+<div class="footer">
+  <div class="footer-inner">
+    <p>
+      PM-Studio · Built with <a href="https://claude.ai/code" target="_blank">Claude Code</a> ·
+      <a href="https://github.com/kyungminkim-ai/ai-native-pm" target="_blank">kyungminkim-ai/ai-native-pm</a> ·
+      2026-05-04
+    </p>
+  </div>
+</div>
 
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-</script>
 </body>
 </html>

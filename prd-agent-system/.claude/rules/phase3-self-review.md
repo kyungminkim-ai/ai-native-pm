@@ -18,6 +18,20 @@
 | 실행 계획 | **(7) 실행 계획** — Timeline + Launch Plan + Open Questions + **작업 시 주의사항** |
 | 참고 자료 | **(8) Appendix** — 참고 데이터 + 관련 문서 |
 
+**FR-EX 크로스레퍼런스 병합 (필수)**
+
+edge-case-analyst Step 4 출력의 "FR 업데이트 지시" 테이블을 읽어
+(4-2) Functional Requirements 테이블의 `관련 EX` 컬럼을 채운다.
+
+```
+병합 절차:
+1. edge-case-analyst 출력에서 "FR 업데이트 지시" 테이블 추출
+2. FR ID를 기준으로 Functional Requirements 테이블 행을 찾아 `관련 EX` 컬럼 업데이트
+   예: A-001 행의 `관련 EX: -` → `관련 EX: EX-003, EX-004`
+3. 매핑 미입력 FR은 `관련 EX: -` 유지 (Self-Review 체크리스트에서 경고)
+4. EX 테이블의 `관련 요구사항` 컬럼도 edge-case-analyst Step 4 출력 2에서 채움
+```
+
 헤더 테이블(Version, 구성원, Milestone)은 알 수 있는 정보로 채우고, 미정 항목은 공란 대신 "{미정}"으로 명시.
 
 ---
@@ -29,12 +43,37 @@
 | 구현 방법(How) 미포함 | "API", "DB", "서버", "개발" 등 기술 용어 감지 시 해당 문장 삭제 후 재작성 |
 | AC 형식 준수 | 모든 요구사항의 AC가 Given/When/Then 형식인가. 단일 문장 AC 발견 시 재작성 |
 | AC 구체성 | Given에 수치/상태가 포함되어 있는가. "확인 가능" 수준의 모호한 Then 재작성 |
-| 비정상 시나리오 완비 | 최소 5개 EX-XXX 항목 존재, Given/When/Then 처리 방안 포함 |
+| 비정상 시나리오 완비 | 최소 5개 EX-XXX 항목 존재, 5가지 관점(INPUT/AUTH/SYS/BIZ/RACE) 각 1개 이상 포함 |
+| EX 케이스 유형 분류 | 각 EX에 EXCEPTIONAL/PREDICTABLE 분류가 존재하는가. 누락 시 분류 추가 |
+| EX 로그 타입 일관성 | PREDICTABLE 케이스에 `ERROR_LOG` 혼용 없는가. BIZ/RACE 비즈니스 결과는 `DROP_BIZ_LOG` 또는 `WARN_LOG` 사용 |
+| FR-EX 크로스레퍼런스 | Functional Requirements 테이블에 `관련 EX` 컬럼이 있고, `-` 플레이스홀더가 없이 EX ID로 채워졌는가 |
 | 결정 회피 표현 제거 | "엔지니어와 협의", "추후 결정", "TBD", "알아서" 감지 시 결정하거나 OQ로 이전 |
 | 목표-지표 정합성 | Phase 1 비즈니스 목표와 지표가 논리적으로 연결되는가 |
 | Baseline 기재 | Metrics 테이블의 Baseline 컬럼이 채워졌는가 (없으면 OQ 처리) |
+| Non-Goals 형식 | 비포함 범위가 3컬럼(제외 항목/제외 이유/현재 운영 대안) 테이블로 작성되었는가 |
 | 필수 섹션 완비 | 목표/요구사항/플로우/비정상시나리오/실행계획 모두 존재하는가 |
+| 실행 계획 공백 불가 | 7-1 Phased Approach에 마일스톤 구조(M1 이상) + 담당자 슬롯이 있는가. 완전 공백이면 템플릿 삽입 |
 | Mermaid 문법 유효성 | diagram-generator 스킬 검증 통과 여부 |
 | Open Questions 형식 | 각 항목이 구체적 질문 형식 + 담당자 + 마감일 + 결정 시 영향 섹션 포함 |
 
-**모든 체크 통과 후** `output/prd_{YYYYMMDD}_{주제}.md`에 저장.
+## Step 3-C: prd_lint 자동 검증 (생략 불가)
+
+LLM 자기 평가에 더해 **Python 스크립트 기반 구조 검증**을 수행한다.
+
+```bash
+python3 prd-agent-system/scripts/prd_lint.py output/prd_{YYYYMMDD}_{주제}.md
+```
+
+**lint 통과 기준:**
+
+| 항목 | 검사 내용 | 실패 시 처리 |
+|------|---------|------------|
+| AC 구조 | `AC-\d{3}:`, `Given:`, `When:`, `Then:` 패턴 존재 여부 | 누락 AC 목록 출력 → 재작성 |
+| EX 최소 개수 | `EX-\d{3}` 패턴 5개 이상 | 부족 시 시나리오 추가 |
+| EX 관점 커버리지 | INPUT/AUTH/SYS/BIZ/RACE 5가지 관점 각 1개 이상 | 누락 관점 출력 → 해당 관점 시나리오 추가 |
+| OQ 형식 | `OQ-\d{3}` 패턴 형식 일치 | 형식 불일치 항목 수정 |
+| 금지 표현 | "엔지니어와 협의", "TBD", "추후 결정", "알아서" | 해당 줄 출력 → 결정 후 재작성 |
+| 실행 계획 공백 | 섹션 7-1에 내용 존재 여부 | 공백이면 마일스톤 템플릿 자동 삽입 |
+
+lint 결과에 오류가 있으면 **에러 로그를 에이전트에 피드백**하여 해당 부분만 재작성한다.
+모든 항목 통과 후 `output/prd_{YYYYMMDD}_{주제}.md`에 저장.

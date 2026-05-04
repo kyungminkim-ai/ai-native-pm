@@ -33,10 +33,33 @@ Task: 아래 다이어그램 요청을 처리해줘.
 
 ---
 
+## EX 시나리오 → Mermaid 노드 매핑 (필수)
+
+edge-case-analyst(Phase 2c)가 생성한 EX-NNN 예외 시나리오는 **예외/에러 플로우 차트의 노드와 명시적으로 연결**되어야 한다.
+diagram-generator 호출 시 아래 매핑 테이블을 함께 전달한다:
+
+```
+[EX → 노드 매핑]
+| EX ID | 관점 | 에러 플로우 차트 내 노드 ID | 노드 설명 |
+|-------|------|--------------------------|---------|
+| EX-001 | INPUT | ErrorNode_Input | {에러 메시지 노드 설명} |
+| EX-002 | AUTH | ErrorNode_Auth | {인증 오류 노드 설명} |
+| EX-003 | SYS | ErrorNode_Timeout | {타임아웃 노드 설명} |
+| EX-004 | BIZ | ErrorNode_Biz | {비즈니스 예외 노드 설명} |
+| EX-005 | RACE | ErrorNode_Race | {동시성 오류 노드 설명} |
+```
+
+**매핑 검증 기준:**
+- 5가지 관점(INPUT/AUTH/SYS/BIZ/RACE)이 각각 에러 플로우 차트에 노드로 표현되어야 함
+- 매핑 누락 시: 해당 EX 시나리오를 에러 플로우 차트에 추가하거나 Open Questions로 이전
+
+---
+
 ## 렌더링 검증 기준
 
 | 검증 항목 | 기준 |
 |---------|-----|
 | Mermaid .html 수 | .mmd 파일 수와 동일 |
 | SVG .html 수 | .svg 파일 수와 동일 |
+| EX → 노드 매핑 | EX-NNN 5가지 관점이 에러 플로우 노드에 각 1개 이상 연결 |
 | 렌더링 실패 | 해당 다이어그램을 Open Questions에 추가, 나머지는 계속 진행 |

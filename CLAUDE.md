@@ -29,27 +29,52 @@
 | PRD 검증 / Red Team | Skill: `/red` |
 | **PRD 스코프 방향 결정** (확장/축소/유지) | Skill: `/red --scope [expand\|selective\|hold\|reduce]` |
 | QA 테스트케이스 + PM 킥오프 브리핑 문서 생성 | Agent: `qa-agent` |
+| **GTM 플래닝** (ICP·채널 전략·런치 타임라인·성공 지표) | Skill: `/gtm` |
+| **GTM 특정 단계** (early=포지셔닝 / mid=채널 / launch=타임라인) | Skill: `/gtm --stage [early\|mid\|launch]` |
 | Weekly Flash 보고서 | Skill: `/pgm [JIRA_KEY]` |
 | **Weekly Flash + Amplitude 지표 자동 수집** | Skill: `/pgm [JIRA_KEY] --metrics amplitude` |
 | 회의록 → Jira Initiative 코멘트 | Skill: `/pgm --weekly [CONFLUENCE_URL]` |
 | Flash + 회의록 + Jira 코멘트 통합 | Skill: `/pgm --full [JIRA_KEY] [CONFLUENCE_URL]` |
 | C레벨 보고서 품질 검토 | Skill: `/report` |
 | 과제 검토 · 클러스터링 (CSV/JQL) | Skill: `/ticket-review` |
+| **OKR 초안 수립** (분기 목표 → Objective + Key Results) | Skill: `/okr` |
+| **OKR 검토** (기존 OKR 품질·측정가능성·커버리지 검토) | Skill: `/okr --review [경로]` |
+| **OKR-이니셔티브 정합성 검토** | Skill: `/okr --align TM-XXXX` |
 | 시장/제품 Discovery 분석 | Skill: `/discovery` |
 | UI/화면 분석 · 화면 설계서 생성 | Skill: `/discovery --mode web-analysis {URL}` |
+| **시장 리서치** (페르소나·경쟁사 포지셔닝·고객 여정 지도) | Skill: `/market-research` |
+| **페르소나 정의** (Jobs-to-be-Done 기반) | Skill: `/market-research --focus persona` |
+| **경쟁사 분석** (포지셔닝 매트릭스·화이트스페이스) | Skill: `/market-research --focus competitor` |
+| **고객 여정 지도** (5단계·Pain Point·기회 포인트) | Skill: `/market-research --focus journey` |
 | Confluence 검색 / 조회 | Agent: `confluence-reader` |
 | Confluence 페이지 저장 | Agent: `confluence-writer` |
+| **로컬 KB 저장** (Slack 대화·문서 마크다운 → input/kb/) | Skill: `/kb add` |
+| **로컬 KB 검색** (자연어 질문 → 관련 문서 답변) | Skill: `/kb query "[질문]"` |
+| **로컬 KB 인덱싱** (INDEX.md 갱신) | Skill: `/kb index` |
+| **NotebookLM 익스포트** (KB → 정제된 단일 파일) | Skill: `/kb export` |
 | Jira 티켓 개별 생성 | Agent: `jira-creator` |
 | 대화/작업 → MEMB Task 티켓 생성 | Skill: `/task-ticket` |
 | 회의록 작성 + Confluence 업로드 | Skill: `/meeting` |
 | 회의록 + Google Calendar 등록 | Skill: `/meeting --calendar` |
 | **오늘/어제/특정 날짜 업무 정리** (타임블럭 CSV+ICS) | Agent: `calendar-agent-system/CLAUDE.md` → **haiku 모델** |
 | **주간 업무 정리** (타임블럭 CSV+ICS) | Agent: `calendar-agent-system/CLAUDE.md` → **haiku 모델** |
-| Databricks 데이터 탐색 · 쿼리 실행 · 분석 | Skill: `/databricks` |
-| **데이터 분석 인사이트** (트렌드/세그먼트/퍼널/코호트/A-B테스트) | Skill: `/analyst --file [경로] --type [유형] --topic "[주제]"` |
-| **Amplitude 데이터 직접 분석** (파일 없이 MCP 조회) | Skill: `/analyst --source amplitude --type [유형] --topic "[주제]"` |
-| **지표 하락 · 이상 원인 분석** (Root Cause) | Skill: `/analyst --type diagnose --topic "[주제]"` |
-| **Amplitude 지표 이상 원인 분석** (MCP 직접 조회) | Skill: `/analyst --source amplitude --type diagnose --topic "[주제]"` |
+| **통합 데이터 분석** (CRM·Amplitude·Databricks·파일 → 조회+분석+차트) | Skill: `/data` |
+| **CRM 전광판 지표 조회 · 분석** (발송성과/세션/동의모수/앱푸시) | Skill: `/data --source crm` 또는 `/crm-analysis` |
+| **CRM 일별 스냅샷** | Skill: `/data --source crm --snapshot` |
+| **CRM 트렌드 분석** (7d/30d/90d) | Skill: `/data --source crm --trend [period]` |
+| **CRM 채널 성과 비교** | Skill: `/data --source crm --channel` |
+| **수신 동의 모수 분석** | Skill: `/data --source crm --consent` |
+| **앱푸시 발송 압력 분석** | Skill: `/data --source crm --push` |
+| **CRM 지표 이상 원인 진단** | Skill: `/data --source crm --diagnose "[지표]"` |
+| Databricks 데이터 탐색 · 쿼리 실행 · 분석 | Skill: `/databricks` 또는 `/data --source databricks` |
+| **데이터 분석 인사이트** (트렌드/세그먼트/퍼널/코호트/A-B테스트) | Skill: `/data --file [경로] --type [유형] --topic "[주제]"` |
+| **Amplitude 데이터 직접 분석** (파일 없이 MCP 조회) | Skill: `/data --source amplitude --type [유형] --topic "[주제]"` |
+| **지표 하락 · 이상 원인 분석** (Root Cause) | Skill: `/data --type diagnose --topic "[주제]"` |
+| **Amplitude 지표 이상 원인 분석** (MCP 직접 조회) | Skill: `/data --source amplitude --type diagnose --topic "[주제]"` |
+| **차트 생성** (CSV → Chart.js HTML, TG/CG 비교·CTR 트렌드·이벤트 마커) | Skill: `/chart --data [경로] --x [컬럼] --y "[컬럼들]"` |
+| **TG/CG 비교 차트** (파란 실선 + 회색 점선 + 이벤트 마커 디자인) | Skill: `/chart --preset ab-compare` |
+| **CTR 트렌드 차트** (단일 라인, % 포맷) | Skill: `/chart --preset ctr-trend` |
+| **세그먼트 막대 차트** (Star/Growth/Risk/Dormant 색상) | Skill: `/chart --preset segment-bar` |
 | Slack 대화 조회 (오늘/이번 주) | Skill: `/slack --today` 또는 `/slack --week` |
 | Slack 채널 내 키워드 검색 | Skill: `/slack --search "[키워드]"` |
 | Slack 메시지 발송 | Skill: `/slack --send` (컨펌 필수) |
@@ -61,6 +86,11 @@
 | CEP / Customer Engagement Platform 전략 논의 | Skill: `/strategy` (Braze Docs 자동 참조) |
 | **AI 개발 전략 · 빌더 마인드셋 · 엔지니어링 생산성** | Skill: `/strategy` (Garry Tan ETHOS 자동 참조) |
 | 오래된 결과물 아카이브 정리 (30일 이상 파일 → archive/) | Skill: `/archive` |
+| **주간 업무 회고 + 피드백** (Jira·Confluence·logs → wiki 갱신 + 결산) | Skill: `/chronicle weekly` |
+| **월간 업무 결산 + 트렌드** (누적 wiki 기반 분석) | Skill: `/chronicle monthly` |
+| **다음 주/달 플래닝** (wiki + 피드백 기반 액션 아이템) | Skill: `/chronicle plan [week\|month]` |
+| **커리어 포트폴리오 추출** (STAR 스토리 + 이력서용 역량 정리) | Skill: `/chronicle portfolio` |
+| **업무 wiki 수동 갱신** | Skill: `/chronicle ingest` |
 
 > 자주 발생하는 복합 패턴 (기획 파이프라인, 성과 보고, 런치 파이프라인 등): `WORKFLOW_PATTERNS.md` 참조
 
@@ -128,9 +158,12 @@ Agent(subagent_type="general-purpose", model="haiku", prompt="...")
 - Confluence API: `.claude/skills/confluence-tool/SKILL.md`
 - Gmail 발송: `.claude/skills/gmail-tool/SKILL.md`
 - Notion API: `.claude/skills/notion-tool/SKILL.md`
+- **통합 데이터 에이전트**: `.claude/skills/data/SKILL.md`
 - Databricks: `.claude/skills/databricks/SKILL.md`
 - Analyst: `.claude/skills/analyst/SKILL.md`
+- Chart: `.claude/skills/chart/SKILL.md`
 - Slack: `.claude/skills/slack/SKILL.md`
 - Figma: `.claude/skills/figma/SKILL.md`
 - Strategy: `.claude/skills/strategy/SKILL.md`
+- **Chronicle (커리어 성장)**: `.claude/skills/chronicle/SKILL.md`
 - 전체 팀 역량 상세: `CAPABILITY_MAP.md`

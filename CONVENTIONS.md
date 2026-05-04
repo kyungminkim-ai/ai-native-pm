@@ -28,6 +28,7 @@
 | 보고서 검토 | `report-agent-system/output/report_review_{YYYYMMDD}_{주제}.md` |
 | 과제 검토 | `pgm-agent-system/output/ticket_review_{YYYYMMDD}.md` |
 | 작업 로그 | `output/work_log_{YYYYMMDD}.md` |
+| CRM 분석 (스냅샷/트렌드/채널/동의/푸시/진단) | `crm-analysis-agent-system/output/crm_analysis_{YYYYMMDD}_{모드}.md` |
 
 ---
 

@@ -37,7 +37,8 @@
 [Phase 0.5] 의도 구조화 (조건부) → .claude/rules/phase2-agents.md §Phase 0.5
 [Phase 1]  전략 및 지표 수립     → .claude/rules/phase1-strategy.md
 [Phase 2a] requirement-writer  → .claude/rules/phase2-agents.md §Phase 2-A
-[Phase 2b] ux-logic-analyst    → .claude/rules/phase2-agents.md §Phase 2-B
+[Phase 2b] ux-logic-analyst    → .claude/rules/phase2-agents.md §Phase 2-B  ※ UX 플로우 + 시스템 정책 전담
+[Phase 2c] edge-case-analyst   → .claude/rules/phase2-agents.md §Phase 2-C  ※ 비정상 시나리오 전담 (신규)
 [Phase 2.5] diagram-generator  → .claude/rules/phase25-diagrams.md
 [Phase 3]  통합 및 Self-Review  → .claude/rules/phase3-self-review.md
 [Phase 4]  Red Team Validation → .claude/rules/phase4-redteam.md
@@ -78,7 +79,25 @@ python3 .claude/skills/confluence-tool/scripts/upload.py \
 
 ---
 
-## 4. 오류 처리
+## 4. 하네스 운영 원칙
+
+파이프라인 전체에 걸쳐 산출물 품질을 보장하는 6가지 내장 제어 장치.
+오케스트레이터는 각 Phase 전환 시 아래 원칙이 지켜지는지 확인한다.
+
+| # | 원칙 | 담당 컴포넌트 | 강제 방법 |
+|---|------|-------------|---------|
+| H-1 | **지표 → 로깅 AC 강제** | requirement-writer | Phase 1 지표(North Star/Primary)가 Phase 2a AC Then 절에 이벤트 로깅으로 연결되는지 검증 |
+| H-2 | **스코프 고정** (Scope Bleed 차단) | 오케스트레이터 | Phase 0.5 "제외 범위"가 Phase 2a Non-Goals에 그대로 이식되었는지 확인 |
+| H-3 | **EX → Mermaid 노드 매핑** | edge-case-analyst + diagram-generator | EX-NNN 5관점 매핑 테이블 → Phase 2.5 에러 플로우 노드 1:1 연결 검증 |
+| H-4 | **prd_lint 자동 검증** | scripts/prd_lint.py | Phase 3 완료 후 Python 스크립트 강제 실행 (AC 구조, EX 관점, 금지 표현 6개 항목) |
+| H-5 | **Red Team PRD 유형별 가중치** | red-team-validator | PRD 유형(기능/플랫폼/데이터) → 검증 포커스 자동 전환 |
+| H-6 | **Phase 간 상태 전달** | 오케스트레이터 | Phase 1 지표 + Phase 0.5 구조체 + EX 매핑을 다음 Phase 에이전트에 명시적 전달 |
+
+> 상세 구현: requirement-writer/AGENT.md §Cross-Reference, phase25-diagrams.md §EX 매핑, phase3-self-review.md §3-C, phase4-redteam.md §PRD 유형별 가중치
+
+---
+
+## 5. 오류 처리
 
 | 오류 유형 | 처리 방법 |
 |----------|----------|
