@@ -37,3 +37,4 @@ test_input/
 config/
 
 .obsidian/
+.zshrc
