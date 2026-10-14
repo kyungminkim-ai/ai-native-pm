@@ -10,10 +10,10 @@
 # MAGIC | 재고 · 보유쿠폰 · 15% | 02 와 **같은 함수**로 지금 시각 기준 재계산. 조건 이탈 시 제외 (`RECHECK_*`) |
 # MAGIC | 최종가 변동 | P1 은 새 가격으로 제목을 다시 만듭니다. 8만 원 경계를 넘으면 variant 가 바뀌므로 제외 |
 # MAGIC
-# MAGIC 모드: `PREVIEW`(기본, API 미호출) → `TEST`(내부 수신자) → `LIVE`. Campaign ID 는 00 의 상수(47a43974) 하나만 씁니다.
+# MAGIC 모드: 상수 `DELIVERY_MODE` — `LIVE`(운영 Job) / `TEST`(내부 수신자) / `PREVIEW`(API 미호출). 위젯을 두지 않습니다. Campaign ID 는 00 의 상수(47a43974) 하나만 씁니다.
 # MAGIC
 # MAGIC 재실행: 같은 날 다시 돌리면 대상 전원에게 다시 호출합니다. 중복 수신은 Braze 캠페인 재수신(re-eligibility) 설정이 거릅니다(2026-10-13 결정).
-# MAGIC LIVE 발송이 끝나면 모수 퍼널과 접수 결과를 Slack #match-29cm-앱푸시-운영 으로 보냅니다.
+# MAGIC LIVE 발송이 끝나면 모수 퍼널과 접수 결과를 Slack #match-29cm-앱푸시-운영 으로 보냅니다. 03 audience 가 0명이면 Braze 를 호출하지 않고 중단 알림을 보냅니다.
 
 # COMMAND ----------
 
@@ -27,7 +27,6 @@
 # COMMAND ----------
 
 import hashlib
-import os
 import re
 import time
 import unicodedata
@@ -41,35 +40,20 @@ BRAZE_REST_ENDPOINT = "https://rest.iad-03.braze.com"
 # H-01 04 와 같은 Databricks Secret을 LIVE/TEST에서 읽습니다.
 BRAZE_API_KEY = None  # LIVE/TEST 시 Databricks Secret에서 읽음
 
-# 신규 시나리오라 기본값을 PREVIEW 로 둡니다. LIVE 는 Job 파라미터 delivery_mode=LIVE 로 전환합니다.
-DEFAULT_DELIVERY_MODE = "LIVE"
+# 매일 도는 운영 Job 이라 LIVE 를 상수로 둡니다. TEST·PREVIEW 는 이 값을 코드에서 바꿔 수동 실행할 때만 씁니다.
+DELIVERY_MODE = "LIVE"
 ALLOWED_DELIVERY_MODES = ["PREVIEW", "TEST", "LIVE"]
-ensure_dropdown_widget("delivery_mode", DEFAULT_DELIVERY_MODE, ALLOWED_DELIVERY_MODES, "전달 모드")
+if DELIVERY_MODE not in ALLOWED_DELIVERY_MODES:
+    raise ValueError(f"DELIVERY_MODE 값이 올바르지 않습니다: {DELIVERY_MODE}")
 
-DEFAULT_TEST_EXTERNAL_USER_IDS = [
+TEST_EXTERNAL_USER_IDS = [
     "4957000", "6115809", "1511054", "5142088", "219322", "3111529", "2231443",
     "2851411", "1430504", "4381168", "9160019", "5668211", "510231", "113217", "7068864",
 ]
-ensure_text_widget(
-    "test_external_user_ids_json",
-    json.dumps(DEFAULT_TEST_EXTERNAL_USER_IDS),
-    "테스트 External User ID JSON",
-)
-ensure_text_widget("braze_batch_size", "50", "Braze 요청당 수신자 수")
-ensure_text_widget("max_retries", "5", "API 최대 재시도")
-ensure_text_widget("daily_send_limit", "50000", "일일 발송 모수 상한 (0=무제한)")
-ensure_text_widget("include_p3", "false", "P3 미확정 문구 포함 여부")
-
-DELIVERY_MODE = widget("delivery_mode").upper()
-if DELIVERY_MODE not in ALLOWED_DELIVERY_MODES:
-    raise ValueError(f"delivery_mode 값이 올바르지 않습니다: {DELIVERY_MODE}")
-TEST_EXTERNAL_USER_IDS = list(
-    dict.fromkeys(json.loads(widget("test_external_user_ids_json")) or DEFAULT_TEST_EXTERNAL_USER_IDS)
-)
-BRAZE_BATCH_SIZE = int(widget("braze_batch_size"))
-MAX_RETRIES = int(widget("max_retries"))
-DAILY_SEND_LIMIT = int(widget("daily_send_limit"))
-INCLUDE_P3 = widget("include_p3").lower() == "true"
+BRAZE_BATCH_SIZE = 50  # Braze 요청당 수신자 수
+MAX_RETRIES = 5  # API 최대 재시도
+DAILY_SEND_LIMIT = 50000  # 일일 발송 모수 상한 (0=무제한)
+INCLUDE_P3 = False  # P3 문구 미확정(O-1)
 if BRAZE_BATCH_SIZE < 1 or BRAZE_BATCH_SIZE > 50:
     raise ValueError("Braze 요청당 수신자는 1~50명이어야 합니다.")
 
@@ -79,10 +63,11 @@ if not spark.catalog.tableExists(OUTPUT_TABLES["audience"]):
 # LIVE 는 이 시각(KST) 이후에만 시작합니다. 일찍 시작하면 구매·쿠폰·재고 재검증이 17:20 발송 시점보다 낡습니다.
 LIVE_EARLIEST_START = (16, 30)
 
-# Slack — Inbox 리포트(inbox_path_daily_slack_report)와 같은 Incoming Webhook 방식입니다.
-# 평문 금지: 환경변수, 없으면 시크릿에서 읽습니다. LIVE 만 보내고, 그 외 모드는 payload 를 출력합니다.
-SLACK_WEBHOOK_ENV = "SLACK_WEBHOOK_SALES_APPPUSH"
-SLACK_WEBHOOK_SECRET = ("kyungmin_inbox_report", "slack_webhook_sales_apppush")
+# Slack — PN-01 전용 Incoming Webhook. 보낼 채널은 Webhook 을 만들 때 정해지므로 SLACK_CHANNEL_NAME 은 로그 표시용입니다.
+# 평문 금지: 시크릿에서만 읽습니다. LIVE 만 보내고, 그 외 모드는 payload 를 출력합니다.
+# 2026-10-14 — 환경변수(SLACK_WEBHOOK_SALES_APPPUSH)를 먼저 읽던 방식은 다른 리포트용 Webhook 이 쓰여
+# 다른 채널로 갔습니다. 환경변수는 읽지 않습니다.
+SLACK_WEBHOOK_SECRET = ("kyungmin_inbox_report", "slack_webhook_pn01_apppush")
 SLACK_CHANNEL_NAME = "#match-29cm-앱푸시-운영"
 SLACK_MAX_RETRY = 2
 WEEKDAY_KO = "월화수목금토일"
@@ -151,9 +136,7 @@ def slack_notify(payload) -> None:
         print(json.dumps(payload, ensure_ascii=False, indent=2))
         return
     try:
-        url = os.getenv(SLACK_WEBHOOK_ENV, "").strip()
-        if not url:
-            url = dbutils.secrets.get(scope=SLACK_WEBHOOK_SECRET[0], key=SLACK_WEBHOOK_SECRET[1]).strip()
+        url = dbutils.secrets.get(scope=SLACK_WEBHOOK_SECRET[0], key=SLACK_WEBHOOK_SECRET[1]).strip()
         webhook_post(url, payload)
     except RuntimeError as exc:
         print(f"[Slack] {exc}")
@@ -208,6 +191,17 @@ spark.table(OUTPUT_TABLES["audience"]).filter(
     & (F.col("is_control") == F.lit(False))
     & F.col("exclude_reason").isNull()
 ).createOrReplaceTempView("pn01_delivery_candidate")
+
+# 03 이 오늘 audience 를 만들지 못했으면 Braze 를 호출하지 않고 멈춥니다. 2026-10-14 에는 01~03 이 다른 날짜로
+# 저장돼 0명인 채로 "접수 0명" 정상 알림이 나갔습니다.
+if DELIVERY_MODE == "LIVE" and spark.table("pn01_delivery_candidate").limit(1).count() == 0:
+    latest_audience_date = (
+        spark.table(OUTPUT_TABLES["audience"]).agg(F.max("as_of_date").alias("d")).collect()[0]["d"]
+    )
+    fail_live(
+        f"03 audience 에 {AS_OF_DATE} 발송 대상이 없습니다(가장 최근 audience 날짜: {latest_audience_date}). "
+        "01~03 이 오늘 정상 완료됐는지 확인하세요."
+    )
 
 # 담기 시그널만 담은 옵션을 넘기고, 좋아요·조회는 지금 판매 가능한 최저가 옵션으로 다시 고릅니다(02 와 같은 규칙).
 spark.sql(
@@ -387,7 +381,7 @@ def build_result_payload(requested_by_variant, accepted_by_variant=None, failed=
         for label, v in [("P1 가격 노출", "P1"), ("P2 브랜드 성장", "P2"), ("P3 일반", "P3"), ("합계", None)]
     ]
     if sent:
-        headline = f"{'⚠️' if failed else '✅'} *Braze 접수 {accepted:,}명* / 요청 {requested:,}명 · 실패 {failed:,}명"
+        headline = f"{'⚠️' if failed or requested == 0 else '✅'} *Braze 접수 {accepted:,}명* / 요청 {requested:,}명 · 실패 {failed:,}명"
     else:
         headline = f":eyes: *{DELIVERY_MODE}* — Braze 를 호출하지 않았습니다. 발송 예정 {requested:,}명"
     notes = ["접수 = Braze API 수락 기준(재수신·빈도 설정으로 실제 도달은 더 적을 수 있음)"]

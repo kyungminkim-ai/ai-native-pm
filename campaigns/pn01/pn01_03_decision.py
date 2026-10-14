@@ -6,7 +6,7 @@
 # MAGIC |---|---|
 # MAGIC | 쿨다운 | 고객 7일 1회, 같은 상품 14일 (F-11). 대조군도 같은 주기로 재진입 |
 # MAGIC | 상품 선택 | 고객 해시로 규칙 배정. **R2(80%)** 의향 점수(우대 카테고리 ×1.5) → 최종가 < 8만 우선 → 시그널 횟수 → 최근 시그널 / **R0(20%)** 현행 좋아요 > 담기 > 조회 → 우대 카테고리 → 8만 미만 → 쿠폰 할인율 → 최근 |
-# MAGIC | 우대 카테고리 | 여성패션·홈·풋웨어 (md_group). 위젯 `priority_md_groups_json` · `priority_md_weight` |
+# MAGIC | 우대 카테고리 | 여성패션·홈·풋웨어 (md_group). 상수 `PRIORITY_MD_GROUPS` · `PRIORITY_MD_WEIGHT` |
 # MAGIC | 대조군 | `xxhash64(customer_id|experiment_id)` 기준. 2026-10-13 부터 0% (미발송 대조군 없음) |
 # MAGIC | variant | P1 최종가 < 8만 / P2 ≥ 8만 · 브랜드 주문 +20% / P3 그 외 (4장) |
 # MAGIC | 측정 코드 | `utm_content` = `A{yymmdd}17{문구}{규칙}{의향}` 예 `A26101317A2C` (문구 A=P1·B=P2, 규칙 0=R0·2=R2, 의향 C·D·L·S·V·W) / `utm_term` = H-01 과 같은 카테고리 코드 예 `wf` |
@@ -32,19 +32,14 @@ PRODUCT_IMAGE_BASE_URL = "https://img.29cm.co.kr"
 THUMBNAIL_IMAGE_TYPE = 3
 DETAIL_IMAGE_TYPE = 4
 
-ensure_text_widget(
-    "utm_campaign",
-    "ALL_push_MATCH_first-buyer-price-nudge_261013",
-    "utm_campaign (캠페인명)",
-)
-UTM_CAMPAIGN = widget("utm_campaign")
+# 캠페인명 끝 261013 은 캠페인 시작일입니다. 매일 바뀌는 날짜는 utm_content 의 yymmdd 에 들어갑니다.
+UTM_CAMPAIGN = "ALL_push_MATCH_first-buyer-price-nudge_261013"
 
 # 광고 코드(utm_content) — H-01 과 같은 마케팅 코드 체계 A + yymmdd + 발송시각 + 군 + 접미 2자리.
 # 군 자리는 문구(P1 → A, P2 → B), 접미 2자리는 상품 선택 규칙(0 = R0, 2 = R2) + 의향 셀(C·D·L·S·V·W) 입니다.
 # P3 는 문구 미합의로 04 가 발송하지 않습니다. 'C' 는 URL 이 비지 않게 하는 자리표시입니다.
 # 발송 시각이 정해지면(O-2) '17' 만 바꾸면 됩니다.
-ensure_text_widget("ad_code_template", "A{yymmdd}17{variant}{rule}{intent}", "광고 코드 템플릿")
-AD_CODE_TEMPLATE = widget("ad_code_template")
+AD_CODE_TEMPLATE = "A{yymmdd}17{variant}{rule}{intent}"
 AD_CODE_YYMMDD = AS_OF_DATE.replace("-", "")[2:]
 VARIANT_LETTERS = {"P1": "A", "P2": "B", "P3": "C"}
 RULE_DIGITS = {"R0": "0", "R2": "2"}
@@ -65,23 +60,19 @@ AD_CODE_SQL_MAP = "MAP(" + ", ".join(
 ) + ")"
 
 # P3 제목은 마케팅 확정 전 초안입니다(O-1).
-ensure_text_widget("p3_title", "보유하신 쿠폰 할인 대상이에요", "P3 제목")
-P3_TITLE = widget("p3_title")
+P3_TITLE = "보유하신 쿠폰 할인 대상이에요"
 
 HOLDOUT_BUCKETS = int(round(HOLDOUT_RATIO * 1000))
 
 # 상품 선택 규칙 배정 — 두 군 모두 발송합니다. R0 = 현행(좋아요 우선), 나머지 = R2(의향 점수).
-ensure_text_widget("pick_rule_r0_ratio", "0.2", "현행 상품 선택 규칙(R0) 배정 비율")
-PICK_RULE_R0_BUCKETS = int(round(float(widget("pick_rule_r0_ratio")) * 1000))
+PICK_RULE_R0_RATIO = 0.2
+PICK_RULE_R0_BUCKETS = int(round(PICK_RULE_R0_RATIO * 1000))
 
 # 우대 카테고리 — R2 는 의향 점수에 배수를 곱하고, R0 는 같은 시그널 종류 안에서 먼저 고릅니다.
 # 10/12 시뮬레이션: ×1.5 에서 여성패션·홈·풋웨어 비중 54% → 63%, 평균 의향 점수 변화 없음.
-ensure_text_widget(
-    "priority_md_groups_json", json.dumps(["여성패션", "홈", "풋웨어"], ensure_ascii=False), "우대 카테고리(md_group)"
-)
-ensure_text_widget("priority_md_weight", "1.5", "우대 카테고리 의향 점수 배수(R2)")
-PRIORITY_MD_GROUPS_SQL = ", ".join(sql_string(group) for group in json.loads(widget("priority_md_groups_json")))
-PRIORITY_MD_WEIGHT = float(widget("priority_md_weight"))
+PRIORITY_MD_GROUPS = ["여성패션", "홈", "풋웨어"]
+PRIORITY_MD_WEIGHT = 1.5
+PRIORITY_MD_GROUPS_SQL = ", ".join(sql_string(group) for group in PRIORITY_MD_GROUPS)
 if not PRIORITY_MD_GROUPS_SQL or PRIORITY_MD_WEIGHT < 1:
     raise ValueError("우대 카테고리는 1개 이상, 배수는 1 이상이어야 합니다.")
 

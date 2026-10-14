@@ -21,30 +21,6 @@ from pyspark.sql import functions as F
 from pyspark.sql import types as T
 
 
-def ensure_text_widget(name: str, default: str, label: str | None = None) -> None:
-    """Create a text widget only when it does not already exist."""
-    try:
-        dbutils.widgets.get(name)
-    except Exception:
-        dbutils.widgets.text(name, default, label or name)
-
-
-def ensure_dropdown_widget(
-    name: str,
-    default: str,
-    choices: list[str],
-    label: str | None = None,
-) -> None:
-    try:
-        dbutils.widgets.get(name)
-    except Exception:
-        dbutils.widgets.dropdown(name, default, choices, label or name)
-
-
-def widget(name: str) -> str:
-    return dbutils.widgets.get(name).strip()
-
-
 def sql_string(value: str) -> str:
     return "'" + value.replace("'", "''") + "'"
 
@@ -67,60 +43,40 @@ def spark_conf_or_none(key: str) -> str | None:
 # COMMAND ----------
 
 KST = ZoneInfo("Asia/Seoul")
-DEFAULT_AS_OF_DATE = datetime.now(KST).strftime("%Y-%m-%d")
 
-ensure_text_widget("as_of_date", DEFAULT_AS_OF_DATE, "기준일 (KST, yyyy-MM-dd)")
-ensure_text_widget("run_id", "", "재실행 추적용 Run ID")
-ensure_text_widget("scenario_id", "PN-01", "시나리오 ID")
-ensure_text_widget("experiment_id", "PN01_V1_2026Q3", "실험 ID")
-ensure_text_widget("output_catalog", "musinsa-ml-product-ws", "Output Catalog")
-ensure_text_widget("output_schema", "common", "Output Schema")
+# 매일 Databricks Job 으로 도는 운영 캠페인이라 위젯을 두지 않습니다. 값은 모두 코드 상수입니다.
+# 2026-10-14 — 위젯 기본값은 처음 만든 날 값으로 노트북에 남고, 기존 위젯은 덮어쓰지 않아서
+# 01~03 은 10-13, 04 는 10-14 로 실행돼 발송이 0명이었습니다(10-13 Campaign ID 불일치와 같은 원인).
+# 기준일은 노트북이 시작할 때 KST 오늘로 계산합니다. 01~04 는 같은 날 17시대에 이어서 돕니다.
+AS_OF_DATE = datetime.now(KST).strftime("%Y-%m-%d")
+SCENARIO_ID = "PN-01"
+EXPERIMENT_ID = "PN01_V1_2026Q3"
+OUTPUT_CATALOG = "musinsa-ml-product-ws"
+OUTPUT_SCHEMA = "common"
 
-# F-2 관심 시그널 기간
-ensure_text_widget("like_lookback_days", "30", "좋아요 시그널 기간(일)")
-ensure_text_widget("cart_lookback_days", "7", "장바구니 시그널 기간(일)")
-ensure_text_widget("view_lookback_days", "7", "PDP 조회 시그널 기간(일)")
+# F-2 관심 시그널 기간(일)
+LIKE_LOOKBACK_DAYS = 30
+CART_LOOKBACK_DAYS = 7
+VIEW_LOOKBACK_DAYS = 7
 # F-5 · F-6 · P2 판정
-ensure_text_widget("min_coupon_rate", "0.15", "쿠폰 할인액 ÷ 판매가 최소값")
-ensure_text_widget("price_expose_threshold", "80000", "가격 노출(P1) 최종가 상한(미만)")
-ensure_text_widget("brand_growth_ratio", "1.2", "P2 브랜드 주문 증가 배수(최근7일/직전7일)")
-ensure_text_widget("brand_min_prev_orders", "30", "P2 판정 최소 직전7일 주문수")
+MIN_COUPON_RATE = 0.15  # 쿠폰 할인액 ÷ 판매가 최소값
+PRICE_EXPOSE_THRESHOLD = 80000  # 가격 노출(P1) 최종가 상한(미만)
+BRAND_GROWTH_RATIO = 1.2  # P2 브랜드 주문 증가 배수(최근7일/직전7일)
+BRAND_MIN_PREV_ORDERS = 30  # P2 판정 최소 직전7일 주문수
 # F-11 · F-12
-ensure_text_widget("cooldown_days", "7", "고객 쿨다운(일)")
-ensure_text_widget("item_cooldown_days", "14", "동일 상품 재발송 금지(일)")
+COOLDOWN_DAYS = 7  # 고객 쿨다운(일)
+ITEM_COOLDOWN_DAYS = 14  # 동일 상품 재발송 금지(일)
 # 2026-10-13 — 미발송 대조군을 두지 않습니다(0). 효과는 utm_term 세그먼트·선택 규칙(R0/R2) 비교로 봅니다.
-ensure_text_widget("holdout_ratio", "0", "대조군 비율")
-# 운영 Braze API-triggered 캠페인. 위젯으로 받지 않습니다 — 인터랙티브 세션에 남은 옛 위젯 값이
-# 01~03 에 섞여 들어간 일이 있었습니다(2026-10-13: 01~03 은 5e35e80f, 04 는 47a43974 로 실행).
+HOLDOUT_RATIO = 0.0
+# 운영 Braze API-triggered 캠페인.
 BRAZE_CAMPAIGN_ID = "47a43974-b251-4253-b2d7-a5fcbbdc352b"
 
-AS_OF_DATE = widget("as_of_date")
-SCENARIO_ID = widget("scenario_id")
-EXPERIMENT_ID = widget("experiment_id")
-OUTPUT_CATALOG = widget("output_catalog")
-OUTPUT_SCHEMA = widget("output_schema")
-
-LIKE_LOOKBACK_DAYS = int(widget("like_lookback_days"))
-CART_LOOKBACK_DAYS = int(widget("cart_lookback_days"))
-VIEW_LOOKBACK_DAYS = int(widget("view_lookback_days"))
-MIN_COUPON_RATE = float(widget("min_coupon_rate"))
-PRICE_EXPOSE_THRESHOLD = int(widget("price_expose_threshold"))
-BRAND_GROWTH_RATIO = float(widget("brand_growth_ratio"))
-BRAND_MIN_PREV_ORDERS = int(widget("brand_min_prev_orders"))
-COOLDOWN_DAYS = int(widget("cooldown_days"))
-ITEM_COOLDOWN_DAYS = int(widget("item_cooldown_days"))
-HOLDOUT_RATIO = float(widget("holdout_ratio"))
-
 RUN_ID = (
-    widget("run_id")
-    or spark_conf_or_none("spark.databricks.job.runId")
+    spark_conf_or_none("spark.databricks.job.runId")
     or f"manual-{datetime.now(KST).strftime('%Y%m%d%H%M%S')}"
 )
 
-try:
-    AS_OF_DATE_VALUE = datetime.strptime(AS_OF_DATE, "%Y-%m-%d").date()
-except ValueError as exc:
-    raise ValueError("as_of_date는 yyyy-MM-dd 형식이어야 합니다.") from exc
+AS_OF_DATE_VALUE = datetime.strptime(AS_OF_DATE, "%Y-%m-%d").date()
 if not 0 <= HOLDOUT_RATIO < 1:
     raise ValueError("holdout_ratio는 0 이상 1 미만이어야 합니다.")
 if not 0 < MIN_COUPON_RATE < 1:
